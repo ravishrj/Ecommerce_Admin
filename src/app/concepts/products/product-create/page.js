@@ -1,4 +1,180 @@
+"use client";
+import { useState, useRef, useEffect } from "react";
+import { collection, addDoc } from "firebase/firestore";
+import { fireStore } from "@/app/_components/firebase/config";
+import { Timestamp } from "firebase/firestore";
+
 const Create_Product = () => {
+  const [productInfo, setProductInfo] = useState({
+    productName: "",
+
+    productCode: "",
+    productDescription: "",
+  });
+  const [productImages, setProductImages] = useState([]);
+  const [priceInfo, setPriceInfo] = useState({
+    Price: "",
+    costPrice: "",
+    discount_Price: "",
+    tax_Rate: "",
+  });
+
+  const [attribute, setAttributeInfo] = useState({
+    category: "",
+    Tags: [],
+    Brands: "",
+  });
+  const [createProductInfo, setcreateProductInfo] = useState([]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Gather the form data into a productData object
+    const productData = {
+      productInfo, // Contains productName, productCode, productDescription
+      productImages, // Array of images
+      priceInfo, // Contains Price, costPrice, discount_Price, tax_Rate
+      attribute, // Contains category, Tags, Brands
+    };
+
+    // Add the new product data to the createProductInfo array
+    setcreateProductInfo((prevState) => [...prevState, productData]);
+
+    // Log the result to the console
+    console.log("Created Product Info:", productData);
+
+    // data stored in firebase
+    try {
+      const contactDataRef = collection(fireStore, "create_Product");
+      // console.log(travelerDataRef, "travelerDataRef");
+      //console.log("allTravelerData", allTravelerData);
+      await addDoc(contactDataRef, {
+        ...createProductInfo,
+        // createdAt: new Date(),
+        createdAt: Timestamp.now(), // Use Firestore's Timestamp
+      });
+    } catch (error) {
+      console.error("Errorng document: ", error);
+    }
+
+    // Reset form data by setting state variables back to their initial values
+    setProductInfo({
+      productName: "",
+      productCode: "",
+      productDescription: "",
+    });
+
+    setProductImages([]); // Reset productImages to an empty array
+
+    setPriceInfo({
+      Price: "",
+      costPrice: "",
+      discount_Price: "",
+      tax_Rate: "",
+    });
+
+    setAttributeInfo({
+      category: "",
+      Tags: [],
+      Brands: "",
+    });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProductInfo((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const applyTextStyle = (style) => {
+    const textarea = document.getElementById("descriptionTextarea");
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selectedText = text.substring(start, end);
+
+    let formattedText = selectedText;
+    if (style === "bold") {
+      formattedText = `**${selectedText}**`;
+    } else if (style === "italic") {
+      formattedText = `_${selectedText}_`;
+    } else if (style === "strike") {
+      formattedText = `~~${selectedText}~~`;
+    }
+
+    const newText =
+      text.substring(0, start) + formattedText + text.substring(end);
+    setProductInfo((prev) => ({
+      ...prev,
+      productDescription: newText,
+    }));
+
+    // Update textarea value and set the cursor back
+    setTimeout(() => {
+      textarea.value = newText;
+      textarea.setSelectionRange(start, start + formattedText.length);
+      textarea.focus();
+    }, 0);
+  };
+
+  const handleImageChange = (event) => {
+    const files = Array.from(event.target.files);
+    const validFiles = [];
+
+    files.forEach((file) => {
+      if (file.size > 500 * 1024) {
+        alert(`${file.name} exceeds 500kb. Please upload a smaller file.`);
+      } else {
+        const reader = new FileReader();
+        reader.onload = () => {
+          validFiles.push(reader.result); // Convert to base64
+          if (
+            validFiles.length === files.length ||
+            productImages.length + validFiles.length >= 5
+          ) {
+            const updatedImages = [...productImages, ...validFiles].slice(0, 5); // Limit to 5 images
+            setProductImages(updatedImages);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  };
+
+  const handleRemoveImage = (index) => {
+    setProductImages((prev) => prev.filter((_, i) => i !== index));
+  };
+  const handleInputPriceChange = (e) => {
+    const { name, value } = e.target;
+    setPriceInfo({
+      ...priceInfo,
+      [name]: value,
+    });
+  };
+
+  const handleInputAttributeChange = (e) => {
+    const { name, value } = e.target;
+
+    // Handle category and brands inputs directly
+    if (name === "category" || name === "Brands") {
+      setAttributeInfo({
+        ...attribute,
+        [name]: value, // Update category or Brands directly
+      });
+    }
+
+    // Handle Tags as an array
+    if (name === "Tags") {
+      setAttributeInfo({
+        ...attribute,
+        Tags: value.split(",").map((tag) => tag.trim()), // Split by commas and remove extra spaces
+      });
+    }
+  };
+
   return (
     <main className="h-full">
       <div
@@ -13,7 +189,7 @@ const Create_Product = () => {
             <h3 className="font-bold">Create product</h3>
           </div>
         </div>
-        <form className="flex w-full h-full">
+        <form className="flex w-full h-full" onSubmit={handleSubmit}>
           <div
             className="form-container vertical flex flex-col w-full justify-between"
             bis_skin_checked={1}
@@ -32,7 +208,7 @@ const Create_Product = () => {
                     role="presentation"
                     bis_skin_checked={1}
                   >
-                    <div className="card-body" bis_skin_checked={1}>
+                    {/* <div className="card-body" bis_skin_checked={1}>
                       <h4 className="mb-6">Basic Information</h4>
                       <div bis_skin_checked={1}>
                         <div
@@ -324,6 +500,79 @@ const Create_Product = () => {
                           </div>
                         </div>
                       </div>
+                    </div> */}
+                    <div className="card-body">
+                      <h4 className="mb-6">Basic Information</h4>
+
+                      {/* Product Name */}
+                      <div className="form-item vertical">
+                        <label className="form-label mb-2">Product Name</label>
+                        <input
+                          className="input input-md h-12 focus:ring-primary focus:border-primary"
+                          autoComplete="off"
+                          placeholder="Product Name"
+                          type="text"
+                          name="productName"
+                          value={productInfo.productName}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+
+                      {/* Product Code */}
+                      <div className="form-item vertical">
+                        <label className="form-label mb-2">Product Code</label>
+                        <input
+                          className="input input-md h-12 focus:ring-primary focus:border-primary"
+                          autoComplete="off"
+                          placeholder="Product Code"
+                          type="text"
+                          name="productCode"
+                          value={productInfo.productCode}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+
+                      {/* Description */}
+                      <div className="form-item vertical">
+                        <label className="form-label mb-2">Description</label>
+
+                        {/* Formatting Buttons */}
+                        <div className="flex gap-x-2 mb-2">
+                          <button
+                            type="button"
+                            className="tool-button text-xl heading-text hover:text-primary p-1.5 rounded-lg border"
+                            onClick={() => applyTextStyle("bold")}
+                          >
+                            Bold
+                          </button>
+                          <button
+                            type="button"
+                            className="tool-button text-xl heading-text hover:text-primary p-1.5 rounded-lg border"
+                            onClick={() => applyTextStyle("italic")}
+                          >
+                            Italic
+                          </button>
+                          <button
+                            type="button"
+                            className="tool-button text-xl heading-text hover:text-primary p-1.5 rounded-lg border"
+                            onClick={() => applyTextStyle("strike")}
+                          >
+                            Strikethrough
+                          </button>
+                        </div>
+
+                        {/* Textarea */}
+                        <textarea
+                          id="descriptionTextarea"
+                          className="input input-md h-24 focus:ring-primary focus:border-primary"
+                          placeholder="Write a detailed description here..."
+                          name="productDescription"
+                          value={productInfo.productDescription}
+                          onChange={handleInputChange}
+                        ></textarea>
+                      </div>
+
+                      {/* Debugging Output */}
                     </div>
                   </div>
                   <div
@@ -331,55 +580,42 @@ const Create_Product = () => {
                     role="presentation"
                     bis_skin_checked={1}
                   >
-                    <div className="card-body" bis_skin_checked={1}>
+                    <div className="card-body">
                       <h4 className="mb-6">Pricing</h4>
-                      <div bis_skin_checked={1}>
-                        <div
-                          className="form-item vertical"
-                          bis_skin_checked={1}
-                        >
+                      <div>
+                        <div className="form-item vertical">
                           <label className="form-label mb-2">Price</label>
-                          <div className="" bis_skin_checked={1}>
+                          <div>
                             <span className="input-wrapper">
-                              <div
-                                className="input-suffix-start"
-                                bis_skin_checked={1}
-                              >
-                                {" "}
-                                ${" "}
-                              </div>
+                              <div className="input-suffix-start"> $ </div>
                               <input
                                 className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary"
                                 autoComplete="off"
                                 placeholder={0.0}
                                 type="text"
-                                defaultValue=""
+                                name="Price"
+                                value={priceInfo.Price}
+                                onChange={handleInputPriceChange}
                                 inputMode="numeric"
                                 style={{ paddingLeft: "1.5625rem" }}
                               />
                             </span>
                           </div>
                         </div>
-                        <div
-                          className="form-item vertical"
-                          bis_skin_checked={1}
-                        >
+
+                        <div className="form-item vertical">
                           <label className="form-label mb-2">Cost price</label>
-                          <div className="" bis_skin_checked={1}>
+                          <div>
                             <span className="input-wrapper">
-                              <div
-                                className="input-suffix-start"
-                                bis_skin_checked={1}
-                              >
-                                {" "}
-                                ${" "}
-                              </div>
+                              <div className="input-suffix-start"> $ </div>
                               <input
                                 className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary"
                                 autoComplete="off"
                                 placeholder={0.0}
                                 type="text"
-                                defaultValue=""
+                                name="costPrice"
+                                value={priceInfo.costPrice}
+                                onChange={handleInputPriceChange}
                                 inputMode="numeric"
                                 style={{ paddingLeft: "1.5625rem" }}
                               />
@@ -387,47 +623,41 @@ const Create_Product = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="md:flex gap-4" bis_skin_checked={1}>
-                        <div
-                          className="form-item vertical w-full"
-                          bis_skin_checked={1}
-                        >
+
+                      <div className="md:flex gap-4">
+                        <div className="form-item vertical w-full">
                           <label className="form-label mb-2">
                             Bulk discount price
                           </label>
-                          <div className="" bis_skin_checked={1}>
+                          <div>
                             <span className="input-wrapper">
-                              <div
-                                className="input-suffix-start"
-                                bis_skin_checked={1}
-                              >
-                                {" "}
-                                ${" "}
-                              </div>
+                              <div className="input-suffix-start"> $ </div>
                               <input
                                 className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary"
                                 autoComplete="off"
                                 placeholder={0.0}
                                 type="text"
-                                defaultValue=""
+                                name="discount_Price"
+                                value={priceInfo.discount_Price}
+                                onChange={handleInputPriceChange}
                                 inputMode="numeric"
                                 style={{ paddingLeft: "1.5625rem" }}
                               />
                             </span>
                           </div>
                         </div>
-                        <div
-                          className="form-item vertical w-full"
-                          bis_skin_checked={1}
-                        >
+
+                        <div className="form-item vertical w-full">
                           <label className="form-label mb-2">Tax rate(%)</label>
-                          <div className="" bis_skin_checked={1}>
+                          <div>
                             <input
                               className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary"
                               autoComplete="off"
                               placeholder={0}
                               type="text"
-                              defaultValue={0}
+                              name="tax_Rate"
+                              value={priceInfo.tax_Rate}
+                              onChange={handleInputPriceChange}
                               inputMode="numeric"
                             />
                           </div>
@@ -445,7 +675,7 @@ const Create_Product = () => {
                     role="presentation"
                     bis_skin_checked={1}
                   >
-                    <div className="card-body" bis_skin_checked={1}>
+                    {/* <div className="card-body" bis_skin_checked={1}>
                       <h4 className="mb-2">Product Image</h4>
                       <p>
                         Choose a product photo or simply drag and drop up to 5
@@ -505,6 +735,80 @@ const Create_Product = () => {
                         Image formats: .jpg, .jpeg, .png, preferred size: 1:1,
                         file size is restricted to a maximum of 500kb.
                       </p>
+                    </div> */}
+                    <div className="card-body">
+                      <h4 className="mb-2">Product Images</h4>
+                      <p>
+                        Choose up to 5 product photos or simply drag and drop
+                        them here.
+                      </p>
+                      <div className="mt-4">
+                        <div className="form-item vertical mb-4">
+                          <label className="form-label">Upload Images</label>
+                          <div>
+                            <div className="upload upload-draggable hover:border-primary">
+                              <input
+                                className="upload-input draggable"
+                                type="file"
+                                accept=".jpg,.jpeg,.png"
+                                multiple
+                                onChange={handleImageChange}
+                              />
+                              <div className="max-w-full flex flex-col px-4 py-8 justify-center items-center">
+                                <div className="text-[60px]">
+                                  <svg
+                                    stroke="currentColor"
+                                    fill="currentColor"
+                                    strokeWidth={0}
+                                    viewBox="0 0 256 256"
+                                    height="1em"
+                                    width="1em"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path d="M216,44H72A12,12,0,0,0,60,56V76H40A12,12,0,0,0,28,88V200a12,12,0,0,0,12,12H184a12,12,0,0,0,12-12V180h20a12,12,0,0,0,12-12V56A12,12,0,0,0,216,44ZM68,56a4,4,0,0,1,4-4H216a4,4,0,0,1,4,4v72.4l-16.89-16.89a12,12,0,0,0-17,0l-22.83,22.83L116.49,87.51a12,12,0,0,0-17,0L68,119ZM188,200a4,4,0,0,1-4,4H40a4,4,0,0,1-4-4V88a4,4,0,0,1,4-4H60v84a12,12,0,0,0,12,12H188Zm28-28H72a4,4,0,0,1-4-4V130.34l37.17-37.17a4,4,0,0,1,5.66,0l49.66,49.66a4,4,0,0,0,5.65,0l25.66-25.66a4,4,0,0,1,5.66,0L220,139.71V168A4,4,0,0,1,216,172ZM164,84a8,8,0,1,1,8,8A8,8,0,0,1,164,84Z" />
+                                  </svg>
+                                </div>
+                                <p className="flex flex-col items-center mt-2">
+                                  <span className="text-gray-800 dark:text-white">
+                                    Drop your images here, or{" "}
+                                  </span>
+                                  <span className="text-primary">
+                                    Click to browse
+                                  </span>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {productImages.length > 0 && (
+                        <div className="mt-4">
+                          <h5 className="mb-2">
+                            Preview ({productImages.length}/5):
+                          </h5>
+                          <div className="grid grid-cols-3 gap-4">
+                            {productImages.map((image, index) => (
+                              <div key={index} className="relative">
+                                <img
+                                  src={image}
+                                  alt={`Product Preview ${index + 1}`}
+                                  className="w-32 h-32 object-cover rounded"
+                                />
+                                <button
+                                  onClick={() => handleRemoveImage(index)}
+                                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-sm"
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      <p>
+                        Image formats: .jpg, .jpeg, .png, preferred size: 1:1,
+                        file size is restricted to a maximum of 500kb per image.
+                      </p>
                     </div>
                   </div>
                   <div
@@ -512,241 +816,53 @@ const Create_Product = () => {
                     role="presentation"
                     bis_skin_checked={1}
                   >
-                    <div className="card-body" bis_skin_checked={1}>
+                    <div className="card-body">
                       <h4 className="mb-6">Attribute</h4>
-                      <div className="form-item vertical" bis_skin_checked={1}>
+
+                      {/* Category */}
+                      <div className="form-item vertical">
                         <label className="form-label mb-2">Category</label>
-                        <div className="" bis_skin_checked={1}>
-                          <div
-                            className="select select-md css-b62m3t-container"
-                            bis_skin_checked={1}
-                          >
-                            <span
-                              id="react-select-13-live-region"
-                              className="css-7pg0cj-a11yText"
-                            />
-                            <span
-                              aria-live="polite"
-                              aria-atomic="false"
-                              aria-relevant="additions text"
-                              role="log"
-                              className="css-7pg0cj-a11yText"
-                            />
-                            <div
-                              className="select-control min-h-12 bg-gray-100 dark:bg-gray-700 select__control css-0"
-                              bis_skin_checked={1}
-                            >
-                              <div
-                                className="select-value-container grid select__value-container css-0"
-                                bis_skin_checked={1}
-                              >
-                                <div
-                                  className="select-placeholder text-gray-400 select__placeholder css-0"
-                                  id="react-select-13-placeholder"
-                                  bis_skin_checked={1}
-                                >
-                                  Select...
-                                </div>
-                                <div
-                                  className="select-input-container visible select__input-container css-p665u"
-                                  data-value=""
-                                  bis_skin_checked={1}
-                                >
-                                  <input
-                                    className="select__input"
-                                    autoCapitalize="none"
-                                    autoComplete="off"
-                                    autoCorrect="off"
-                                    id="react-select-13-input"
-                                    spellCheck="false"
-                                    tabIndex={0}
-                                    aria-autocomplete="list"
-                                    aria-expanded="false"
-                                    aria-haspopup="true"
-                                    role="combobox"
-                                    aria-activedescendant=""
-                                    aria-describedby="react-select-13-placeholder"
-                                    type="text"
-                                    defaultValue=""
-                                    style={{
-                                      color: "inherit",
-                                      background: "0px center",
-                                      opacity: 1,
-                                      width: "100%",
-                                      gridArea: "1 / 2",
-                                      font: "inherit",
-                                      minWidth: 2,
-                                      border: 0,
-                                      margin: 0,
-                                      outline: 0,
-                                      padding: 0,
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                              <div
-                                className="select-indicators-container select__indicators css-1wy0on6"
-                                bis_skin_checked={1}
-                              >
-                                <div
-                                  className="select-dropdown-indicator"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="currentColor"
-                                    strokeWidth={0}
-                                    viewBox="0 0 20 20"
-                                    aria-hidden="true"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                        <div>
+                          <input
+                            className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary"
+                            autoComplete="off"
+                            placeholder="Enter category"
+                            type="text"
+                            value={attribute.category}
+                            onChange={handleInputAttributeChange}
+                            name="category"
+                          />
                         </div>
                       </div>
-                      <div className="form-item vertical" bis_skin_checked={1}>
-                        <label className="form-label mb-2">
-                          Tags
-                          <span>
-                            <span className="tooltip-wrapper">
-                              <svg
-                                stroke="currentColor"
-                                fill="none"
-                                strokeWidth={2}
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                className="text-base mx-1"
-                                height="1em"
-                                width="1em"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                            </span>
-                          </span>
-                        </label>
-                        <div className="" bis_skin_checked={1}>
-                          <div
-                            className="select select-md css-b62m3t-container"
-                            bis_skin_checked={1}
-                          >
-                            <span
-                              id="react-select-14-live-region"
-                              className="css-7pg0cj-a11yText"
-                            />
-                            <span
-                              aria-live="polite"
-                              aria-atomic="false"
-                              aria-relevant="additions text"
-                              role="log"
-                              className="css-7pg0cj-a11yText"
-                            />
-                            <div
-                              className="select-control min-h-12 bg-gray-100 dark:bg-gray-700 select__control css-0"
-                              bis_skin_checked={1}
-                            >
-                              <div
-                                className="select-value-container grid select__value-container select__value-container--is-multi css-0"
-                                bis_skin_checked={1}
-                              >
-                                <div
-                                  className="select-placeholder text-gray-400 select__placeholder css-0"
-                                  id="react-select-14-placeholder"
-                                  bis_skin_checked={1}
-                                >
-                                  Add tags for product...
-                                </div>
-                                <div
-                                  className="select-input-container visible select__input-container css-p665u"
-                                  data-value=""
-                                  bis_skin_checked={1}
-                                >
-                                  <input
-                                    className="select__input"
-                                    autoCapitalize="none"
-                                    autoComplete="off"
-                                    autoCorrect="off"
-                                    id="react-select-14-input"
-                                    spellCheck="false"
-                                    tabIndex={0}
-                                    aria-autocomplete="list"
-                                    aria-expanded="false"
-                                    aria-haspopup="true"
-                                    role="combobox"
-                                    aria-activedescendant=""
-                                    aria-describedby="react-select-14-placeholder"
-                                    type="text"
-                                    defaultValue=""
-                                    style={{
-                                      color: "inherit",
-                                      background: "0px center",
-                                      opacity: 1,
-                                      width: "100%",
-                                      gridArea: "1 / 2",
-                                      font: "inherit",
-                                      minWidth: 2,
-                                      border: 0,
-                                      margin: 0,
-                                      outline: 0,
-                                      padding: 0,
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                              <div
-                                className="select-indicators-container select__indicators css-1wy0on6"
-                                bis_skin_checked={1}
-                              >
-                                <div
-                                  className="select-dropdown-indicator"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="currentColor"
-                                    strokeWidth={0}
-                                    viewBox="0 0 20 20"
-                                    aria-hidden="true"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+
+                      {/* Tags */}
+                      <div className="form-item vertical">
+                        <label className="form-label mb-2">Tags</label>
+                        <div>
+                          <input
+                            className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary"
+                            autoComplete="off"
+                            placeholder="Enter tags (comma separated)"
+                            type="text"
+                            value={attribute.Tags.join(", ")} // Join tags as a comma-separated string
+                            onChange={handleInputAttributeChange}
+                            name="Tags"
+                          />
                         </div>
                       </div>
-                      <div className="form-item vertical" bis_skin_checked={1}>
+
+                      {/* Brand */}
+                      <div className="form-item vertical">
                         <label className="form-label mb-2">Brand</label>
-                        <div className="" bis_skin_checked={1}>
+                        <div>
                           <input
                             className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary"
                             autoComplete="off"
                             placeholder="Product brand"
                             type="text"
-                            defaultValue=""
-                            name="brand"
+                            value={attribute.Brands}
+                            onChange={handleInputAttributeChange}
+                            name="Brands"
                           />
                         </div>
                       </div>

@@ -4,6 +4,8 @@ const Header = ({
   isMobile,
   setMobNavabarToggle,
   mobNavbarToggle,
+  isLogin,
+  setLogin,
 }) => {
   const handleNavbarToggle = () => {
     setNavbarToggle((prev) => !prev);
@@ -64,6 +66,7 @@ const Header = ({
             role="menuitem"
             aria-expanded="false"
             aria-haspopup="menu"
+            {...(isLogin ? { "data-floating-ui-inert": true } : {})}
           >
             <div className="header-action-item header-action-item-hoverable flex items-center">
               <span
@@ -90,8 +93,12 @@ const Header = ({
             role="menuitem"
             aria-expanded="false"
             aria-haspopup="menu"
+            {...(isLogin ? { "data-floating-ui-inert": true } : {})}
           >
-            <div className="text-2xl header-action-item header-action-item-hoverable">
+            <div
+              className="text-2xl header-action-item header-action-item-hoverable"
+              data-floating-ui-inert
+            >
               <span className="badge-wrapper relative flex">
                 <span
                   className="badge-dot w-3 h-3 border border-white dark:border-gray-900 rounded-full text-xs font-semibold bg-error text-white badge-inner"
@@ -115,7 +122,16 @@ const Header = ({
               </span>
             </div>
           </div>
-          <div className="dropdown-toggle flex items-center">
+          <div
+            className="dropdown-toggle flex items-center"
+            onClick={() => {
+              setLogin((prev) => !prev);
+            }}
+            aria-expanded={isLogin ? "true" : "false"}
+            {...(isLogin ? { "data-floating-ui-inert": true } : {})}
+            aria-controls={isLogin ? ":r7:" : ""}
+            {...(isLogin ? { "data-open": true } : {})}
+          >
             <span
               className="avatar avatar-circle"
               style={{
@@ -134,6 +150,87 @@ const Header = ({
               />
             </span>
           </div>
+          {/* {isLogin && (
+            <span
+              tabIndex={-1}
+              aria-hidden="true"
+              style={{
+                border: 0,
+                clip: "rect(0px, 0px, 0px, 0px)",
+                height: 1,
+                margin: "-1px",
+                overflow: "hidden",
+                padding: 0,
+                position: "fixed",
+                whiteSpace: "nowrap",
+                width: 1,
+                top: 0,
+                left: 0,
+              }}
+              data-floating-ui-inert=""
+            />
+          )}
+          {isLogin && (
+            <span
+              data-type="outside"
+              tabIndex={0}
+              aria-hidden="true"
+              data-floating-ui-focus-guard=""
+              style={{
+                border: 0,
+                clip: "rect(0px, 0px, 0px, 0px)",
+                height: 1,
+                margin: "-1px",
+                overflow: "hidden",
+                padding: 0,
+                position: "fixed",
+                whiteSpace: "nowrap",
+                width: 1,
+                top: 0,
+                left: 0,
+              }}
+            />
+          )}
+          {isLogin && (
+            <span
+              aria-owns=":r21:"
+              style={{
+                border: 0,
+                clip: "rect(0px, 0px, 0px, 0px)",
+                height: 1,
+                margin: "-1px",
+                overflow: "hidden",
+                padding: 0,
+                position: "fixed",
+                whiteSpace: "nowrap",
+                width: 1,
+                top: 0,
+                left: 0,
+              }}
+              data-floating-ui-inert=""
+            />
+          )}
+          {isLogin && (
+            <span
+              data-type="outside"
+              tabIndex={0}
+              aria-hidden="true"
+              data-floating-ui-focus-guard=""
+              style={{
+                border: 0,
+                clip: "rect(0px, 0px, 0px, 0px)",
+                height: 1,
+                margin: "-1px",
+                overflow: "hidden",
+                padding: 0,
+                position: "fixed",
+                whiteSpace: "nowrap",
+                width: 1,
+                top: 0,
+                left: 0,
+              }}
+            />
+          )} */}
         </div>
       </div>
     </header>
