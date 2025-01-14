@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth, googleAuth } from "../firebase/config";
+import { auth, googleAuth } from "../_components/firebase/config";
 import { signInWithPopup } from "firebase/auth";
 import { toast } from "react-toastify";
 
@@ -144,7 +144,7 @@ const userDashboard = ({ onSignUpClick, onLoginSuccess }) => {
                           maxLength={4}
                           minLength={4}
                           className="textbox numbersOnly valid"
-                          onkeypress="return EnterEvent_btn(event)"
+                          // onkeypress="return EnterEvent_btn(event)"
                           placeholder="Pin"
                           autoComplete="off"
                           data-gtm-form-interact-field-id={1}
@@ -173,7 +173,7 @@ const userDashboard = ({ onSignUpClick, onLoginSuccess }) => {
                         </button>
                         <a
                           href="javascript:void(0);"
-                          onclick="profileModel_user('forgot_popup','signIn')"
+                          //  onclick="profileModel_user('forgot_popup','signIn')"
                           className="forgot pull-right"
                         >
                           Forgot Pin?
@@ -242,7 +242,7 @@ const userDashboard = ({ onSignUpClick, onLoginSuccess }) => {
                         </div>
                         <div className="form-row">
                           <button
-                            onclick="forgetPin()"
+                            //  onclick="forgetPin()"
                             type="button"
                             className="button"
                           >
@@ -257,7 +257,7 @@ const userDashboard = ({ onSignUpClick, onLoginSuccess }) => {
                           <button
                             type="button"
                             className="button grayBtn"
-                            onclick="profileModel_user('signIn','forgot_popup')"
+                            //  onclick="profileModel_user('signIn','forgot_popup')"
                           >
                             Back
                           </button>

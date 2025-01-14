@@ -1,17 +1,114 @@
 // src/app/layout.js or src/app/_components/layout/page.js
 "use client";
+import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import Header from "./_components/header/page";
 import Sidebar from "./_components/sidebar/page";
+import { useRouter } from "next/navigation";
+import userDashboard from "./userLoginDashboard/page";
+import { signOut } from "firebase/auth";
+import { auth } from "./_components/firebase/config";
+import Sign_In from "./sign-in/page";
+import Sign_up from "./sign-up/page";
+import { useParams } from "next/navigation";
+//import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function ClientLayout({ children }) {
   const [navbarToggle, setNavbarToggle] = useState(false);
   const [mobNavbarToggle, setMobNavabarToggle] = useState(false);
   const [isLogin, setLogin] = useState(false);
+  const [isAuthClose, setAuthClose] = useState(false);
+  const [username, setUsername] = useState("");
+  //const [user, loading] = useAuthState(auth);
+  const [currentUser, setCurrentUser] = useState(null);
 
   const [windowWidth, setWindowWidth] = useState(0);
+  const router = useRouter();
+  const params = useParams();
+  const [activeRoute, setActiveRoute] = useState("");
+
+  // useEffect(() => {
+  //   // const current_user = localStorage.getItem("current-user");
+  //   if (user) setAuthClose(true);
+  //   else router.push("/sign-in");
+  // }, []);
+
+  // useEffect(() => {
+  //   const unsubscribe = auth.onAuthStateChanged((user) => {
+  //     if (user) {
+  //       // User is signed in, update the state and local storage
+  //       const userData = {
+  //         uid: user.uid,
+  //         displayName: user.displayName || "User",
+  //         email: user.email,
+  //       };
+  //       // setUser(userData);
+  //       // setCurrentUser(userData);
+  //       // setUsername(user.displayName || "User");
+  //       setAuthClose(true);
+  //       localStorage.setItem("current-user", JSON.stringify(userData));
+  //     } else {
+  //       // User is signed out
+  //       // setUser(null);
+  //       // setCurrentUser(null);
+  //       // setUsername("");
+  //       router.push("/sign-in").then(() => {
+  //         window.location.reload(); // Force a reload after navigation
+  //       });
+  //       setAuthClose(false);
+  //       localStorage.removeItem("current-user");
+  //     }
+  //   });
+
+  //   return () => unsubscribe();
+  // }, []);
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in, update the state and local storage
+        const userData = {
+          uid: user.uid,
+          displayName: user.displayName || "User",
+          email: user.email,
+        };
+        console.log("userData", userData);
+        setCurrentUser(userData);
+
+        setAuthClose(true);
+        localStorage.setItem("current-user", JSON.stringify(userData));
+      } else {
+        // User is signed out
+
+        setCurrentUser(null);
+        setAuthClose(false);
+        localStorage.removeItem("current-user");
+
+        // Force navigation to sign-in and reload the page
+        // if (router.pathname !== "/sign-in") {
+
+        //   router.push("/sign-in");
+        // }
+      }
+    });
+    console.log("currentUser", currentUser);
+    return () => unsubscribe();
+  }, [router, setAuthClose]);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setActiveRoute(
+        window.location.href.split("/")[
+          window.location.href.split("/").length - 1
+        ],
+        "Active path"
+      );
+    }
+
+    // if (typeof window !== "undefined") {
+    //   const currentPath = window.location.href.split("/").pop();
+    //   setActiveRoute(currentPath);
+    // }
+
     // Function to update window width
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -28,11 +125,31 @@ export default function ClientLayout({ children }) {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+  const handleSignOut = () => {
+    //router.push("/userLoginDashboard");
+    signOut(auth)
+      .then(() => {
+        // Remove user session info from sessionStorage
+        sessionStorage.removeItem("user");
+        localStorage.removeItem("current-user");
+        setLogin(false);
+        setAuthClose(false);
+        setUsername("");
+        // Show success toast message
+        window.location.href = "/sign-in";
+        toast.success("You have successfully signed out.");
+      })
+      .catch((error) => {
+        // Show error message if sign-out fails
+        console.error("Sign-out error: ", error);
+        toast.error("An error occurred while signing out. Please try again.");
+      });
+  };
 
   // Determine if it's mobile or desktop
   const isMobile = windowWidth <= 1012; // You can adjust the breakpoint as needed
 
-  return (
+  return isAuthClose ? (
     <>
       <div className="app-layout-collapsible-side flex flex-auto flex-col">
         <div className="flex flex-auto min-w-0">
@@ -3673,7 +3790,7 @@ export default function ClientLayout({ children }) {
                       className="font-bold text-gray-900 dark:text-gray-100"
                       bis_skin_checked={1}
                     >
-                      Angelina Gotelli
+                      {currentUser.displayName}
                     </div>
                     <div className="text-xs" bis_skin_checked={1}>
                       admin-01@ecme.com
@@ -3782,6 +3899,7 @@ export default function ClientLayout({ children }) {
               <li
                 className="menu-item menu-item-hoverable gap-2"
                 style={{ height: 42 }}
+                onClick={handleSignOut}
               >
                 <span className="text-xl">
                   <svg
@@ -3825,6 +3943,16 @@ export default function ClientLayout({ children }) {
             }}
           />
         </div>
+      )}
+    </>
+  ) : (
+    <>
+      {activeRoute === "sign-up" ? (
+        <Sign_up setAuthClose={setAuthClose} />
+      ) : activeRoute === "sign-in" ? (
+        <Sign_In setAuthClose={setAuthClose} />
+      ) : (
+        <Sign_In setAuthClose={setAuthClose} />
       )}
     </>
   );

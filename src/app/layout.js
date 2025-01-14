@@ -26,20 +26,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <link href="/style.css" rel="stylesheet" />
+        <link href="/profile.css" rel="stylesheet" />
       </head>
       <body>
-        {/* <>
-          <div className="app-layout-collapsible-side flex flex-auto flex-col">
-            <div className="flex flex-auto min-w-0">
-              {" "}
-              <Sidebar />
-              <div className="flex flex-col flex-auto min-h-screen min-w-0 relative w-full">
-                <Header />
-                {children}
-              </div>
-            </div>
-          </div>
-        </> */}
         <ToastContainer />
         <ClientLayout>{children}</ClientLayout>
       </body>
