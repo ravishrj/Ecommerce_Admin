@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { collection, addDoc } from "firebase/firestore";
 import { fireStore } from "@/app/_components/firebase/config";
 import { Timestamp } from "firebase/firestore";
+import { doc } from "firebase/firestore";
 
 const Create_Product = () => {
   const [productInfo, setProductInfo] = useState({
@@ -48,7 +49,7 @@ const Create_Product = () => {
       // console.log(travelerDataRef, "travelerDataRef");
       //console.log("allTravelerData", allTravelerData);
       await addDoc(contactDataRef, {
-        ...createProductInfo,
+        productData,
         // createdAt: new Date(),
         createdAt: Timestamp.now(), // Use Firestore's Timestamp
       });

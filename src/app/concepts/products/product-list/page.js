@@ -1,4 +1,60 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { fireStore } from "@/app/_components/firebase/config";
+import { doc, deleteDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 const Product_List = () => {
+  const router = useRouter();
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const querySnapshot = await getDocs(
+          collection(fireStore, "create_Product")
+        );
+        const productsData = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+
+          console.log("Fetched Product:", data); // Log each document's dat
+          return {
+            id: doc.id, // Document ID
+            ...data, // Spread all fields from Firestore
+          };
+        });
+        setProducts(productsData);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    console.log(products, "products");
+
+    fetchProducts();
+  }, []);
+
+  const handleDeleteProduct = async (id) => {
+    try {
+      const productDocRef = doc(fireStore, "create_Product", id);
+
+      // Delete the document
+      await deleteDoc(productDocRef);
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product.id !== id)
+      );
+
+      console.log("Product deleted successfully!");
+      toast.success("Product deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting product:", error.message);
+    }
+  };
+  const handleEditProduct = async (id) => {
+    router.push(`/concepts/products/product-edit/12?id=${id}`);
+  };
+
   return (
     <main className="h-full">
       <div
@@ -393,1356 +449,152 @@ const Product_List = () => {
                             </div>
                           </td>
                         </tr>
-                        <tr>
-                          <td style={{ width: 50 }}>
-                            <label className="checkbox-label mb-0">
-                              <span className="checkbox-wrapper h-5 relative">
-                                <input
-                                  className="checkbox peer text-primary"
-                                  type="checkbox"
-                                />
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-3.5 w-3.5 stroke-neutral fill-neutral opacity-0 transition-opacity peer-checked:opacity-100 pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 mt-[1.25px]"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z"
-                                    clipRule="evenodd"
+                        {products.map((product) => (
+                          <tr key={product.id}>
+                            {/* Checkbox */}
+                            <td style={{ width: 50 }}>
+                              <label className="checkbox-label mb-0">
+                                <span className="checkbox-wrapper h-5 relative">
+                                  <input
+                                    className="checkbox peer text-primary"
+                                    type="checkbox"
                                   />
-                                </svg>
-                              </span>
-                            </label>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center gap-2"
-                              bis_skin_checked={1}
-                            >
-                              <span
-                                className="avatar avatar-round"
-                                style={{
-                                  width: 60,
-                                  height: 60,
-                                  minWidth: 60,
-                                  lineHeight: 60,
-                                  fontSize: 12,
-                                }}
-                              >
-                                <img
-                                  className="avatar-img avatar-round"
-                                  loading="lazy"
-                                  src="/img/products/product-2.jpg"
-                                />
-                              </span>
-                              <div bis_skin_checked={1}>
-                                <div
-                                  className="font-bold heading-text mb-1"
-                                  bis_skin_checked={1}
-                                >
-                                  Snövalla
-                                </div>
-                                <span>ID: 098359NT</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">
-                              <span>$139.00</span>
-                            </span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">28</span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex flex-col gap-1"
-                              bis_skin_checked={1}
-                            >
-                              <span className="flex gap-1">
-                                <span className="font-semibold">
-                                  <span>892</span>
-                                </span>
-                                <span>Sales</span>
-                              </span>
-                              <div
-                                className="progress line"
-                                bis_skin_checked={1}
-                              >
-                                <div
-                                  className="progress-wrapper"
-                                  bis_skin_checked={1}
-                                >
-                                  <div
-                                    className="progress-inner"
-                                    bis_skin_checked={1}
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-3.5 w-3.5 stroke-neutral fill-neutral opacity-0 transition-opacity peer-checked:opacity-100 pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 mt-[1.25px]"
+                                    viewBox="0 0 20 20"
                                   >
-                                    <div
-                                      className="progress-bg h-2 bg-success"
-                                      bis_skin_checked={1}
-                                      style={{ width: "78%" }}
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z"
+                                      clipRule="evenodd"
                                     />
+                                  </svg>
+                                </span>
+                              </label>
+                            </td>
+
+                            {/* Product Details */}
+                            <td style={{ width: 150 }}>
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className="avatar avatar-round"
+                                  style={{
+                                    width: 60,
+                                    height: 60,
+                                    minWidth: 60,
+                                    lineHeight: 60,
+                                    fontSize: 12,
+                                  }}
+                                >
+                                  <img
+                                    className="avatar-img avatar-round"
+                                    loading="lazy"
+                                    src={product?.productData?.productImages[0]}
+                                  />
+                                </span>
+                                <div>
+                                  <div className="font-bold heading-text mb-1">
+                                    {
+                                      product?.productData?.productInfo
+                                        ?.productName
+                                    }
+                                  </div>
+                                  <span>ID: {product.id}</span>
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Price */}
+                            <td style={{ width: 150 }}>
+                              <span className="font-bold heading-text">
+                                ${product?.productData?.priceInfo.Price}
+                              </span>
+                            </td>
+
+                            {/* Quantity */}
+                            <td style={{ width: 150 }}>
+                              <span className="font-bold heading-text">
+                                {product.quantity}
+                              </span>
+                            </td>
+
+                            {/* Sales and Progress */}
+                            <td style={{ width: 150 }}>
+                              <div className="flex flex-col gap-1">
+                                <span className="flex gap-1">
+                                  <span className="font-semibold">
+                                    {product.sales}
+                                  </span>
+                                  <span>Sales</span>
+                                </span>
+                                <div className="progress line">
+                                  <div className="progress-wrapper">
+                                    <div className="progress-inner">
+                                      <div
+                                        className="progress-bg h-2 bg-success"
+                                        style={{
+                                          width: `${product.progress}%`,
+                                        }}
+                                      />
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center justify-end gap-3"
-                              bis_skin_checked={1}
-                            >
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
+                            </td>
+
+                            {/* Actions */}
+                            <td style={{ width: 150 }}>
+                              <div className="flex items-center justify-end gap-3">
+                                <span
+                                  className="tooltip-wrapper"
+                                  onClick={() => handleEditProduct(product?.id)}
                                 >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                    <path d="M13.5 6.5l4 4" />
-                                  </svg>
-                                </div>
-                              </span>
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 7l16 0" />
-                                    <path d="M10 11l0 6" />
-                                    <path d="M14 11l0 6" />
-                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                  </svg>
-                                </div>
-                              </span>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style={{ width: 50 }}>
-                            <label className="checkbox-label mb-0">
-                              <span className="checkbox-wrapper h-5 relative">
-                                <input
-                                  className="checkbox peer text-primary"
-                                  type="checkbox"
-                                />
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-3.5 w-3.5 stroke-neutral fill-neutral opacity-0 transition-opacity peer-checked:opacity-100 pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 mt-[1.25px]"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              </span>
-                            </label>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center gap-2"
-                              bis_skin_checked={1}
-                            >
-                              <span
-                                className="avatar avatar-round"
-                                style={{
-                                  width: 60,
-                                  height: 60,
-                                  minWidth: 60,
-                                  lineHeight: 60,
-                                  fontSize: 12,
-                                }}
-                              >
-                                <img
-                                  className="avatar-img avatar-round"
-                                  loading="lazy"
-                                  src="/img/products/product-3.jpg"
-                                />
-                              </span>
-                              <div bis_skin_checked={1}>
-                                <div
-                                  className="font-bold heading-text mb-1"
-                                  bis_skin_checked={1}
-                                >
-                                  Echoes Necklace
-                                </div>
-                                <span>ID: 098383NT</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">
-                              <span>$99.00</span>
-                            </span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">52</span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex flex-col gap-1"
-                              bis_skin_checked={1}
-                            >
-                              <span className="flex gap-1">
-                                <span className="font-semibold">
-                                  <span>1,145</span>
-                                </span>
-                                <span>Sales</span>
-                              </span>
-                              <div
-                                className="progress line"
-                                bis_skin_checked={1}
-                              >
-                                <div
-                                  className="progress-wrapper"
-                                  bis_skin_checked={1}
-                                >
-                                  <div
-                                    className="progress-inner"
-                                    bis_skin_checked={1}
-                                  >
-                                    <div
-                                      className="progress-bg h-2 bg-error"
-                                      bis_skin_checked={1}
-                                      style={{ width: "19%" }}
-                                    />
+                                  <div className="text-xl cursor-pointer font-semibold">
+                                    <svg
+                                      stroke="currentColor"
+                                      fill="none"
+                                      strokeWidth={2}
+                                      viewBox="0 0 24 24"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      height="1em"
+                                      width="1em"
+                                    >
+                                      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+                                      <path d="M13.5 6.5l4 4" />
+                                    </svg>
                                   </div>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center justify-end gap-3"
-                              bis_skin_checked={1}
-                            >
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                    <path d="M13.5 6.5l4 4" />
-                                  </svg>
-                                </div>
-                              </span>
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 7l16 0" />
-                                    <path d="M10 11l0 6" />
-                                    <path d="M14 11l0 6" />
-                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                  </svg>
-                                </div>
-                              </span>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style={{ width: 50 }}>
-                            <label className="checkbox-label mb-0">
-                              <span className="checkbox-wrapper h-5 relative">
-                                <input
-                                  className="checkbox peer text-primary"
-                                  type="checkbox"
-                                />
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-3.5 w-3.5 stroke-neutral fill-neutral opacity-0 transition-opacity peer-checked:opacity-100 pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 mt-[1.25px]"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              </span>
-                            </label>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center gap-2"
-                              bis_skin_checked={1}
-                            >
-                              <span
-                                className="avatar avatar-round"
-                                style={{
-                                  width: 60,
-                                  height: 60,
-                                  minWidth: 60,
-                                  lineHeight: 60,
-                                  fontSize: 12,
-                                }}
-                              >
-                                <img
-                                  className="avatar-img avatar-round"
-                                  loading="lazy"
-                                  src="/img/products/product-4.jpg"
-                                />
-                              </span>
-                              <div bis_skin_checked={1}>
-                                <div
-                                  className="font-bold heading-text mb-1"
-                                  bis_skin_checked={1}
-                                >
-                                  Lömnäs
-                                </div>
-                                <span>ID: 098342NT</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">
-                              <span>$68.00</span>
-                            </span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">92</span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex flex-col gap-1"
-                              bis_skin_checked={1}
-                            >
-                              <span className="flex gap-1">
-                                <span className="font-semibold">
-                                  <span>651</span>
                                 </span>
-                                <span>Sales</span>
-                              </span>
-                              <div
-                                className="progress line"
-                                bis_skin_checked={1}
-                              >
-                                <div
-                                  className="progress-wrapper"
-                                  bis_skin_checked={1}
+                                <span
+                                  className="tooltip-wrapper"
+                                  onClick={() =>
+                                    handleDeleteProduct(product?.id)
+                                  } // Use an arrow function
                                 >
-                                  <div
-                                    className="progress-inner"
-                                    bis_skin_checked={1}
-                                  >
-                                    <div
-                                      className="progress-bg h-2 bg-success"
-                                      bis_skin_checked={1}
-                                      style={{ width: "82%" }}
-                                    />
+                                  <div className="text-xl cursor-pointer font-semibold">
+                                    <svg
+                                      stroke="currentColor"
+                                      fill="none"
+                                      strokeWidth={2}
+                                      viewBox="0 0 24 24"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      height="1em"
+                                      width="1em"
+                                    >
+                                      <path d="M4 7l16 0" />
+                                      <path d="M10 11l0 6" />
+                                      <path d="M14 11l0 6" />
+                                      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                    </svg>
                                   </div>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center justify-end gap-3"
-                              bis_skin_checked={1}
-                            >
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                    <path d="M13.5 6.5l4 4" />
-                                  </svg>
-                                </div>
-                              </span>
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 7l16 0" />
-                                    <path d="M10 11l0 6" />
-                                    <path d="M14 11l0 6" />
-                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                  </svg>
-                                </div>
-                              </span>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style={{ width: 50 }}>
-                            <label className="checkbox-label mb-0">
-                              <span className="checkbox-wrapper h-5 relative">
-                                <input
-                                  className="checkbox peer text-primary"
-                                  type="checkbox"
-                                />
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-3.5 w-3.5 stroke-neutral fill-neutral opacity-0 transition-opacity peer-checked:opacity-100 pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 mt-[1.25px]"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              </span>
-                            </label>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center gap-2"
-                              bis_skin_checked={1}
-                            >
-                              <span
-                                className="avatar avatar-round"
-                                style={{
-                                  width: 60,
-                                  height: 60,
-                                  minWidth: 60,
-                                  lineHeight: 60,
-                                  fontSize: 12,
-                                }}
-                              >
-                                <img
-                                  className="avatar-img avatar-round"
-                                  loading="lazy"
-                                  src="/img/products/product-5.jpg"
-                                />
-                              </span>
-                              <div bis_skin_checked={1}>
-                                <div
-                                  className="font-bold heading-text mb-1"
-                                  bis_skin_checked={1}
-                                >
-                                  Kallaxa
-                                </div>
-                                <span>ID: 098371NT</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">
-                              <span>$70.00</span>
-                            </span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">119</span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex flex-col gap-1"
-                              bis_skin_checked={1}
-                            >
-                              <span className="flex gap-1">
-                                <span className="font-semibold">
-                                  <span>234</span>
                                 </span>
-                                <span>Sales</span>
-                              </span>
-                              <div
-                                className="progress line"
-                                bis_skin_checked={1}
-                              >
-                                <div
-                                  className="progress-wrapper"
-                                  bis_skin_checked={1}
-                                >
-                                  <div
-                                    className="progress-inner"
-                                    bis_skin_checked={1}
-                                  >
-                                    <div
-                                      className="progress-bg h-2 bg-error"
-                                      bis_skin_checked={1}
-                                      style={{ width: "33%" }}
-                                    />
-                                  </div>
-                                </div>
                               </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center justify-end gap-3"
-                              bis_skin_checked={1}
-                            >
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                    <path d="M13.5 6.5l4 4" />
-                                  </svg>
-                                </div>
-                              </span>
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 7l16 0" />
-                                    <path d="M10 11l0 6" />
-                                    <path d="M14 11l0 6" />
-                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                  </svg>
-                                </div>
-                              </span>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style={{ width: 50 }}>
-                            <label className="checkbox-label mb-0">
-                              <span className="checkbox-wrapper h-5 relative">
-                                <input
-                                  className="checkbox peer text-primary"
-                                  type="checkbox"
-                                />
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-3.5 w-3.5 stroke-neutral fill-neutral opacity-0 transition-opacity peer-checked:opacity-100 pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 mt-[1.25px]"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              </span>
-                            </label>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center gap-2"
-                              bis_skin_checked={1}
-                            >
-                              <span
-                                className="avatar avatar-round"
-                                style={{
-                                  width: 60,
-                                  height: 60,
-                                  minWidth: 60,
-                                  lineHeight: 60,
-                                  fontSize: 12,
-                                }}
-                              >
-                                <img
-                                  className="avatar-img avatar-round"
-                                  loading="lazy"
-                                  src="/img/products/product-6.jpg"
-                                />
-                              </span>
-                              <div bis_skin_checked={1}>
-                                <div
-                                  className="font-bold heading-text mb-1"
-                                  bis_skin_checked={1}
-                                >
-                                  Ringed Earring
-                                </div>
-                                <span>ID: 098314NT</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">
-                              <span>$29.00</span>
-                            </span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">18</span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex flex-col gap-1"
-                              bis_skin_checked={1}
-                            >
-                              <span className="flex gap-1">
-                                <span className="font-semibold">
-                                  <span>1,201</span>
-                                </span>
-                                <span>Sales</span>
-                              </span>
-                              <div
-                                className="progress line"
-                                bis_skin_checked={1}
-                              >
-                                <div
-                                  className="progress-wrapper"
-                                  bis_skin_checked={1}
-                                >
-                                  <div
-                                    className="progress-inner"
-                                    bis_skin_checked={1}
-                                  >
-                                    <div
-                                      className="progress-bg h-2 bg-success"
-                                      bis_skin_checked={1}
-                                      style={{ width: "76%" }}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center justify-end gap-3"
-                              bis_skin_checked={1}
-                            >
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                    <path d="M13.5 6.5l4 4" />
-                                  </svg>
-                                </div>
-                              </span>
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 7l16 0" />
-                                    <path d="M10 11l0 6" />
-                                    <path d="M14 11l0 6" />
-                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                  </svg>
-                                </div>
-                              </span>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style={{ width: 50 }}>
-                            <label className="checkbox-label mb-0">
-                              <span className="checkbox-wrapper h-5 relative">
-                                <input
-                                  className="checkbox peer text-primary"
-                                  type="checkbox"
-                                />
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-3.5 w-3.5 stroke-neutral fill-neutral opacity-0 transition-opacity peer-checked:opacity-100 pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 mt-[1.25px]"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              </span>
-                            </label>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center gap-2"
-                              bis_skin_checked={1}
-                            >
-                              <span
-                                className="avatar avatar-round"
-                                style={{
-                                  width: 60,
-                                  height: 60,
-                                  minWidth: 60,
-                                  lineHeight: 60,
-                                  fontSize: 12,
-                                }}
-                              >
-                                <img
-                                  className="avatar-img avatar-round"
-                                  loading="lazy"
-                                  src="/img/products/product-7.jpg"
-                                />
-                              </span>
-                              <div bis_skin_checked={1}>
-                                <div
-                                  className="font-bold heading-text mb-1"
-                                  bis_skin_checked={1}
-                                >
-                                  Maneki Neko Poster
-                                </div>
-                                <span>ID: 098336NT</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">
-                              <span>$389.00</span>
-                            </span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">7</span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex flex-col gap-1"
-                              bis_skin_checked={1}
-                            >
-                              <span className="flex gap-1">
-                                <span className="font-semibold">
-                                  <span>49</span>
-                                </span>
-                                <span>Sales</span>
-                              </span>
-                              <div
-                                className="progress line"
-                                bis_skin_checked={1}
-                              >
-                                <div
-                                  className="progress-wrapper"
-                                  bis_skin_checked={1}
-                                >
-                                  <div
-                                    className="progress-inner"
-                                    bis_skin_checked={1}
-                                  >
-                                    <div
-                                      className="progress-bg h-2 bg-warning"
-                                      bis_skin_checked={1}
-                                      style={{ width: "56%" }}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center justify-end gap-3"
-                              bis_skin_checked={1}
-                            >
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                    <path d="M13.5 6.5l4 4" />
-                                  </svg>
-                                </div>
-                              </span>
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 7l16 0" />
-                                    <path d="M10 11l0 6" />
-                                    <path d="M14 11l0 6" />
-                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                  </svg>
-                                </div>
-                              </span>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style={{ width: 50 }}>
-                            <label className="checkbox-label mb-0">
-                              <span className="checkbox-wrapper h-5 relative">
-                                <input
-                                  className="checkbox peer text-primary"
-                                  type="checkbox"
-                                />
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-3.5 w-3.5 stroke-neutral fill-neutral opacity-0 transition-opacity peer-checked:opacity-100 pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 mt-[1.25px]"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              </span>
-                            </label>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center gap-2"
-                              bis_skin_checked={1}
-                            >
-                              <span
-                                className="avatar avatar-round"
-                                style={{
-                                  width: 60,
-                                  height: 60,
-                                  minWidth: 60,
-                                  lineHeight: 60,
-                                  fontSize: 12,
-                                }}
-                              >
-                                <img
-                                  className="avatar-img avatar-round"
-                                  loading="lazy"
-                                  src="/img/products/product-8.jpg"
-                                />
-                              </span>
-                              <div bis_skin_checked={1}>
-                                <div
-                                  className="font-bold heading-text mb-1"
-                                  bis_skin_checked={1}
-                                >
-                                  Ektöra
-                                </div>
-                                <span>ID: 098368NT</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">
-                              <span>$869.00</span>
-                            </span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">30</span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex flex-col gap-1"
-                              bis_skin_checked={1}
-                            >
-                              <span className="flex gap-1">
-                                <span className="font-semibold">
-                                  <span>978</span>
-                                </span>
-                                <span>Sales</span>
-                              </span>
-                              <div
-                                className="progress line"
-                                bis_skin_checked={1}
-                              >
-                                <div
-                                  className="progress-wrapper"
-                                  bis_skin_checked={1}
-                                >
-                                  <div
-                                    className="progress-inner"
-                                    bis_skin_checked={1}
-                                  >
-                                    <div
-                                      className="progress-bg h-2 bg-success"
-                                      bis_skin_checked={1}
-                                      style={{ width: "89%" }}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center justify-end gap-3"
-                              bis_skin_checked={1}
-                            >
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                    <path d="M13.5 6.5l4 4" />
-                                  </svg>
-                                </div>
-                              </span>
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 7l16 0" />
-                                    <path d="M10 11l0 6" />
-                                    <path d="M14 11l0 6" />
-                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                  </svg>
-                                </div>
-                              </span>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style={{ width: 50 }}>
-                            <label className="checkbox-label mb-0">
-                              <span className="checkbox-wrapper h-5 relative">
-                                <input
-                                  className="checkbox peer text-primary"
-                                  type="checkbox"
-                                />
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-3.5 w-3.5 stroke-neutral fill-neutral opacity-0 transition-opacity peer-checked:opacity-100 pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 mt-[1.25px]"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              </span>
-                            </label>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center gap-2"
-                              bis_skin_checked={1}
-                            >
-                              <span
-                                className="avatar avatar-round"
-                                style={{
-                                  width: 60,
-                                  height: 60,
-                                  minWidth: 60,
-                                  lineHeight: 60,
-                                  fontSize: 12,
-                                }}
-                              >
-                                <img
-                                  className="avatar-img avatar-round"
-                                  loading="lazy"
-                                  src="/img/products/product-9.jpg"
-                                />
-                              </span>
-                              <div bis_skin_checked={1}>
-                                <div
-                                  className="font-bold heading-text mb-1"
-                                  bis_skin_checked={1}
-                                >
-                                  Spiky Ring
-                                </div>
-                                <span>ID: 098392NT</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">
-                              <span>$1,599.00</span>
-                            </span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">27</span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex flex-col gap-1"
-                              bis_skin_checked={1}
-                            >
-                              <span className="flex gap-1">
-                                <span className="font-semibold">
-                                  <span>573</span>
-                                </span>
-                                <span>Sales</span>
-                              </span>
-                              <div
-                                className="progress line"
-                                bis_skin_checked={1}
-                              >
-                                <div
-                                  className="progress-wrapper"
-                                  bis_skin_checked={1}
-                                >
-                                  <div
-                                    className="progress-inner"
-                                    bis_skin_checked={1}
-                                  >
-                                    <div
-                                      className="progress-bg h-2 bg-warning"
-                                      bis_skin_checked={1}
-                                      style={{ width: "42%" }}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center justify-end gap-3"
-                              bis_skin_checked={1}
-                            >
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                    <path d="M13.5 6.5l4 4" />
-                                  </svg>
-                                </div>
-                              </span>
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 7l16 0" />
-                                    <path d="M10 11l0 6" />
-                                    <path d="M14 11l0 6" />
-                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                  </svg>
-                                </div>
-                              </span>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style={{ width: 50 }}>
-                            <label className="checkbox-label mb-0">
-                              <span className="checkbox-wrapper h-5 relative">
-                                <input
-                                  className="checkbox peer text-primary"
-                                  type="checkbox"
-                                />
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-3.5 w-3.5 stroke-neutral fill-neutral opacity-0 transition-opacity peer-checked:opacity-100 pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 mt-[1.25px]"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              </span>
-                            </label>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center gap-2"
-                              bis_skin_checked={1}
-                            >
-                              <span
-                                className="avatar avatar-round"
-                                style={{
-                                  width: 60,
-                                  height: 60,
-                                  minWidth: 60,
-                                  lineHeight: 60,
-                                  fontSize: 12,
-                                }}
-                              >
-                                <img
-                                  className="avatar-img avatar-round"
-                                  loading="lazy"
-                                  src="/img/products/product-10.jpg"
-                                />
-                              </span>
-                              <div bis_skin_checked={1}>
-                                <div
-                                  className="font-bold heading-text mb-1"
-                                  bis_skin_checked={1}
-                                >
-                                  Pastel Petals Poster
-                                </div>
-                                <span>ID: 098355NT</span>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">
-                              <span>$729.00</span>
-                            </span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <span className="font-bold heading-text">6</span>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex flex-col gap-1"
-                              bis_skin_checked={1}
-                            >
-                              <span className="flex gap-1">
-                                <span className="font-semibold">
-                                  <span>1,322</span>
-                                </span>
-                                <span>Sales</span>
-                              </span>
-                              <div
-                                className="progress line"
-                                bis_skin_checked={1}
-                              >
-                                <div
-                                  className="progress-wrapper"
-                                  bis_skin_checked={1}
-                                >
-                                  <div
-                                    className="progress-inner"
-                                    bis_skin_checked={1}
-                                  >
-                                    <div
-                                      className="progress-bg h-2 bg-success"
-                                      bis_skin_checked={1}
-                                      style={{ width: "92%" }}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td style={{ width: 150 }}>
-                            <div
-                              className="flex items-center justify-end gap-3"
-                              bis_skin_checked={1}
-                            >
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                    <path d="M13.5 6.5l4 4" />
-                                  </svg>
-                                </div>
-                              </span>
-                              <span className="tooltip-wrapper">
-                                <div
-                                  className="text-xl cursor-pointer select-none font-semibold"
-                                  role="button"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M4 7l16 0" />
-                                    <path d="M10 11l0 6" />
-                                    <path d="M14 11l0 6" />
-                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                  </svg>
-                                </div>
-                              </span>
-                            </div>
-                          </td>
-                        </tr>
+                            </td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
                   </div>

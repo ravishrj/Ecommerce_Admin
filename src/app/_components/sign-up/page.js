@@ -3,12 +3,17 @@ import { useState, useRef } from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { doc, setDoc } from "firebase/firestore";
 
-import { auth, googleAuth, fireStore } from "../_components/firebase/config";
+import { auth, googleAuth, fireStore } from "../firebase/config";
 import { signInWithPopup, updateProfile } from "firebase/auth";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-const Sign_up = ({ setAuthClose }) => {
+const Sign_up = ({
+  setAuthClose,
+  classProp,
+  loadedComponent,
+  setLoadedComponent,
+}) => {
   const router = useRouter();
   const userNameRef = useRef("");
 
@@ -24,8 +29,17 @@ const Sign_up = ({ setAuthClose }) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      console.log("Passwords do not match");
       toast.error("Passwords do not match");
+      return;
+    }
+
+    if (!emailRef.current.value || !password) {
+      toast.error("Email and password are required");
+      return;
+    }
+
+    if (!userNameRef.current.value) {
+      toast.error("user name is  required");
       return;
     }
 
@@ -34,29 +48,34 @@ const Sign_up = ({ setAuthClose }) => {
       const userCredential = await createUserWithEmailAndPassword(
         emailRef.current.value,
         password
-      );
-      console.log(userCredential, "userCredential");
-      const user = userCredential.user;
-
-      //setting display name
-      await updateProfile(user, {
-        displayName: `${userNameRef.current.value}`,
+      ).catch((error) => {
+        console.error("Error creating user:", error);
+        toast.error("Error creating user: " + error.message);
       });
-      // Store additional user information in Firestore
+
+      if (!userCredential) return;
+
+      const user = userCredential.user;
+      const name = userNameRef.current.value;
+
+      // Set display name
+      await updateProfile(user, {
+        displayName: name,
+      });
+
+      // Store user data in Firestore
       await setDoc(doc(fireStore, "users", user.uid), {
-        firstName: userNameRef.current.value,
-
-        email: user.email,
-
+        firstName: name,
+        email: user?.email,
         createdAt: new Date(),
       });
 
       sessionStorage.setItem("user", true);
-      // router.push("/sign-in");
-      // Optionally, you can add a success message or redirect
-      toast.success("Sign-up successful! Click on Sign-in to Login");
 
-      // setSuccess(true);
+      toast.success("Sign-up successful! Click on Sign-in to Login");
+      loadedComponent("signin");
+
+      // window.location.href = "/sign-in";
     } catch (e) {
       setAuthClose(false);
       console.log(e);
@@ -81,7 +100,12 @@ const Sign_up = ({ setAuthClose }) => {
   };
 
   return (
-    <div className="flex flex-auto flex-col h-[100vh]" bis_skin_checked={1}>
+    <div
+      id="signup_component"
+      className={`flex flex-auto flex-col h-[100vh]`}
+      style={{ display: classProp == "is-visible" ? "flex" : "none" }}
+      bis_skin_checked={1}
+    >
       <div
         className="flex h-full p-6 bg-white dark:bg-gray-800"
         bis_skin_checked={1}
@@ -185,7 +209,8 @@ const Sign_up = ({ setAuthClose }) => {
                 <span>Already have an account? </span>
                 <a
                   className="hover:underline heading-text font-bold"
-                  href="/sign-in"
+                  // href="/sign-in"
+                  onClick={() => setLoadedComponent("signin")}
                 >
                   Sign in
                 </a>
