@@ -4,11 +4,13 @@ import { collection, addDoc } from "firebase/firestore";
 import { fireStore } from "@/app/_components/firebase/config";
 import { updateDoc } from "firebase/firestore";
 import { doc, getDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 
 const Edit_Product = () => {
   const searchParams = useSearchParams();
   const productId = searchParams.get("id");
+  const [product, setProduct] = useState("");
 
   const [updatedData, setUpdatedData] = useState({
     productName: "",
@@ -83,18 +85,21 @@ const Edit_Product = () => {
 
           // Populate updatedData with all fields
           setUpdatedData({
-            productName: productData.productInfo?.productName || "",
-            productCode: productData.productInfo?.productCode || "",
+            productName:
+              productData.productData?.productInfo?.productName || "",
+            productCode:
+              productData.productData?.productInfo?.productCode || "",
             productDescription:
-              productData.productInfo?.productDescription || "",
-            Price: productData.priceInfo?.Price || "",
-            costPrice: productData.priceInfo?.costPrice || "",
-            discount_Price: productData.priceInfo?.discount_Price || "",
-            tax_Rate: productData.priceInfo?.tax_Rate || "",
-            category: productData.attribute?.category || "",
-            Tags: productData.attribute?.Tags || [],
-            Brands: productData.attribute?.Brands || "",
-            productImages: productData.productImages || [],
+              productData.productData?.productInfo?.productDescription || "",
+            Price: productData.productData?.priceInfo?.Price || "",
+            costPrice: productData.productData?.priceInfo?.costPrice || "",
+            discount_Price:
+              productData.productData?.priceInfo?.discount_Price || "",
+            tax_Rate: productData.productData?.priceInfo?.tax_Rate || "",
+            category: productData.productData?.attribute?.category || "",
+            Tags: productData.productData?.attribute?.Tags || [],
+            Brands: productData.productData?.attribute?.Brands || "",
+            productImages: productData.productData?.productImages || [],
           });
         } else {
           toast.error("Product not found");
@@ -111,59 +116,68 @@ const Edit_Product = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Gather the form data into a productData object
-    const productData = {
-      productInfo: {
-        productName: updatedData.productName,
-        productCode: updatedData.productCode,
-        productDescription: updatedData.productDescription,
-      },
-      productImages: updatedData.productImages, // Array of images
-      priceInfo: {
-        Price: updatedData.Price,
-        costPrice: updatedData.costPrice,
-        discount_Price: updatedData.discount_Price,
-        tax_Rate: updatedData.tax_Rate,
-      },
-      attribute: {
-        category: updatedData.category,
-        Tags: updatedData.Tags,
-        Brands: updatedData.Brands,
-      },
-    };
-
-    // Log the updated product data to the console
-    console.log("Updated Product Info:", productData);
+    if (!productId) {
+      toast.error("No product ID found");
+      return;
+    }
 
     try {
-      const productRef = doc(fireStore, "create_Product", productId); // Get reference to the specific product in Firestore
+      // Reference to the product document
+      const productRef = doc(fireStore, "create_Product", productId);
 
-      // Update the product document with the updated data
-      await updateDoc(productRef, productData);
+      // Fetch the current product document
+      const productDoc = await getDoc(productRef);
+
+      if (!productDoc.exists()) {
+        toast.error("Product not found");
+        return;
+      }
+
+      // Fetch the existing product data
+      let existingProductData = productDoc.data().productData;
+
+      if (!existingProductData || typeof existingProductData !== "object") {
+        existingProductData = {}; // Ensure it is an object
+      }
+
+      // Merge the existing productData with the updated values
+      const updatedProductData = {
+        ...existingProductData,
+        productInfo: {
+          ...existingProductData.productInfo, // Preserve existing data
+          productName: updatedData.productName,
+          productCode: updatedData.productCode,
+          productDescription: updatedData.productDescription,
+        },
+        priceInfo: {
+          ...existingProductData.priceInfo,
+          Price: updatedData.Price,
+          costPrice: updatedData.costPrice,
+          discount_Price: updatedData.discount_Price,
+          tax_Rate: updatedData.tax_Rate,
+        },
+        attribute: {
+          ...existingProductData.attribute,
+          category: updatedData.category,
+          Tags: updatedData.Tags,
+          Brands: updatedData.Brands,
+        },
+        productImages: updatedData.productImages.length
+          ? updatedData.productImages
+          : existingProductData.productImages, // Keep existing images if not updated
+      };
+
+      // Update the document in Firestore
+      await updateDoc(productRef, { productData: updatedProductData });
 
       toast.success("Product updated successfully");
 
-      // Redirect to the product details page after update
-      router.push(`/product-detail/${productId}`);
+      // Redirect or refresh if needed
+      router.push(`/concepts/products/product-list`);
     } catch (error) {
-      console.error("Error updating document:", error);
+      console.error("Error updating product:", error);
       toast.error("Error updating product");
     }
-
-    // Reset form data by setting state variables back to their initial values
-    setUpdatedData({
-      productName: "",
-      productCode: "",
-      productDescription: "",
-      Price: "",
-      costPrice: "",
-      discount_Price: "",
-      tax_Rate: "",
-      category: "",
-      Tags: [],
-      Brands: "",
-      productImages: [],
-    });
   };
 
   return (

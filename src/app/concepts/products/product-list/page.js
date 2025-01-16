@@ -55,6 +55,53 @@ const Product_List = () => {
     router.push(`/concepts/products/product-edit/12?id=${id}`);
   };
 
+  const exportToCSV = async () => {
+    try {
+      // Step 1: Fetch Product Data from Firestore
+      const querySnapshot = await getDocs(
+        collection(fireStore, "create_Product")
+      );
+      const productList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      if (productList.length === 0) {
+        alert("No products found!");
+        return;
+      }
+
+      // Step 2: Convert Data to CSV Format
+      const csvHeader = "ID,Product Name,Product Code,Price,Category,Brand\n";
+      const csvRows = productList.map((product) => {
+        const productInfo = product.productData?.productInfo || {}; // Access first productData object
+        const priceInfo = product.productData?.priceInfo || {};
+        const attribute = product.productData?.attribute || {};
+
+        return `${product.id},"${productInfo.productName}","${productInfo.productCode}",${priceInfo.Price},"${attribute.category}","${attribute.Brands}"`;
+      });
+
+      const csvContent = csvHeader + csvRows.join("\n");
+
+      // Step 3: Create a Blob & Generate a Download Link
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+
+      // Step 4: Create a Temporary Download Link and Click it
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "product-list.csv";
+      document.body.appendChild(a);
+      a.click();
+
+      // Cleanup
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error exporting CSV:", error);
+    }
+  };
+
   return (
     <main className="h-full">
       <div
@@ -78,7 +125,7 @@ const Product_List = () => {
                     className="flex flex-col md:flex-row gap-3"
                     bis_skin_checked={1}
                   >
-                    <a
+                    {/* <a
                       download="product-list.csv"
                       target="_self"
                       href="blob:https://ecme-react.themenate.net/d5866dd3-709e-4acc-b320-1c0165ba45f6"
@@ -106,8 +153,40 @@ const Product_List = () => {
                           <span>Export</span>
                         </span>
                       </button>
-                    </a>
-                    <button className="button bg-primary hover:bg-primary-mild text-neutral h-12 rounded-xl px-5 py-2 button-press-feedback">
+                    </a> */}
+                    <button
+                      onClick={exportToCSV}
+                      className="button bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-700 ring-primary dark:ring-white hover:border-primary dark:hover:border-white hover:ring-1 hover:text-primary dark:hover:text-white dark:hover:bg-transparent text-gray-600 dark:text-gray-100 h-12 rounded-xl px-5 py-2 button-press-feedback"
+                    >
+                      <span className="flex gap-1 items-center justify-center">
+                        <span className="text-lg">
+                          <svg
+                            stroke="currentColor"
+                            fill="none"
+                            strokeWidth={2}
+                            viewBox="0 0 24 24"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="text-xl"
+                            height="1em"
+                            width="1em"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M19 18a3.5 3.5 0 0 0 0 -7h-1a5 4.5 0 0 0 -11 -2a4.6 4.4 0 0 0 -2.1 8.4" />
+                            <path d="M12 13l0 9" />
+                            <path d="M9 19l3 3l3 -3" />
+                          </svg>
+                        </span>
+                        <span>Export</span>
+                      </span>
+                    </button>
+
+                    <button
+                      className="button bg-primary hover:bg-primary-mild text-neutral h-12 rounded-xl px-5 py-2 button-press-feedback"
+                      onClick={() => {
+                        router.push("/concepts/products/product-create");
+                      }}
+                    >
                       <span className="flex gap-1 items-center justify-center">
                         <span className="text-lg">
                           <svg
@@ -449,152 +528,157 @@ const Product_List = () => {
                             </div>
                           </td>
                         </tr>
-                        {products.map((product) => (
-                          <tr key={product.id}>
-                            {/* Checkbox */}
-                            <td style={{ width: 50 }}>
-                              <label className="checkbox-label mb-0">
-                                <span className="checkbox-wrapper h-5 relative">
-                                  <input
-                                    className="checkbox peer text-primary"
-                                    type="checkbox"
-                                  />
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-3.5 w-3.5 stroke-neutral fill-neutral opacity-0 transition-opacity peer-checked:opacity-100 pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 mt-[1.25px]"
-                                    viewBox="0 0 20 20"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z"
-                                      clipRule="evenodd"
+                        {products.length > 0 &&
+                          products.map((product) => (
+                            <tr key={product.id}>
+                              {/* Checkbox */}
+                              <td style={{ width: 50 }}>
+                                <label className="checkbox-label mb-0">
+                                  <span className="checkbox-wrapper h-5 relative">
+                                    <input
+                                      className="checkbox peer text-primary"
+                                      type="checkbox"
                                     />
-                                  </svg>
-                                </span>
-                              </label>
-                            </td>
-
-                            {/* Product Details */}
-                            <td style={{ width: 150 }}>
-                              <div className="flex items-center gap-2">
-                                <span
-                                  className="avatar avatar-round"
-                                  style={{
-                                    width: 60,
-                                    height: 60,
-                                    minWidth: 60,
-                                    lineHeight: 60,
-                                    fontSize: 12,
-                                  }}
-                                >
-                                  <img
-                                    className="avatar-img avatar-round"
-                                    loading="lazy"
-                                    src={product?.productData?.productImages[0]}
-                                  />
-                                </span>
-                                <div>
-                                  <div className="font-bold heading-text mb-1">
-                                    {
-                                      product?.productData?.productInfo
-                                        ?.productName
-                                    }
-                                  </div>
-                                  <span>ID: {product.id}</span>
-                                </div>
-                              </div>
-                            </td>
-
-                            {/* Price */}
-                            <td style={{ width: 150 }}>
-                              <span className="font-bold heading-text">
-                                ${product?.productData?.priceInfo.Price}
-                              </span>
-                            </td>
-
-                            {/* Quantity */}
-                            <td style={{ width: 150 }}>
-                              <span className="font-bold heading-text">
-                                {product.quantity}
-                              </span>
-                            </td>
-
-                            {/* Sales and Progress */}
-                            <td style={{ width: 150 }}>
-                              <div className="flex flex-col gap-1">
-                                <span className="flex gap-1">
-                                  <span className="font-semibold">
-                                    {product.sales}
-                                  </span>
-                                  <span>Sales</span>
-                                </span>
-                                <div className="progress line">
-                                  <div className="progress-wrapper">
-                                    <div className="progress-inner">
-                                      <div
-                                        className="progress-bg h-2 bg-success"
-                                        style={{
-                                          width: `${product.progress}%`,
-                                        }}
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      className="h-3.5 w-3.5 stroke-neutral fill-neutral opacity-0 transition-opacity peer-checked:opacity-100 pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 mt-[1.25px]"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z"
+                                        clipRule="evenodd"
                                       />
+                                    </svg>
+                                  </span>
+                                </label>
+                              </td>
+
+                              {/* Product Details */}
+                              <td style={{ width: 150 }}>
+                                <div className="flex items-center gap-2">
+                                  <span
+                                    className="avatar avatar-round"
+                                    style={{
+                                      width: 60,
+                                      height: 60,
+                                      minWidth: 60,
+                                      lineHeight: 60,
+                                      fontSize: 12,
+                                    }}
+                                  >
+                                    <img
+                                      className="avatar-img avatar-round"
+                                      loading="lazy"
+                                      src={
+                                        product?.productData?.productImages[0]
+                                      }
+                                    />
+                                  </span>
+                                  <div>
+                                    <div className="font-bold heading-text mb-1">
+                                      {
+                                        product?.productData?.productInfo
+                                          ?.productName
+                                      }
+                                    </div>
+                                    <span>ID: {product.id}</span>
+                                  </div>
+                                </div>
+                              </td>
+
+                              {/* Price */}
+                              <td style={{ width: 150 }}>
+                                <span className="font-bold heading-text">
+                                  ${product?.productData?.priceInfo.Price}
+                                </span>
+                              </td>
+
+                              {/* Quantity */}
+                              <td style={{ width: 150 }}>
+                                <span className="font-bold heading-text">
+                                  {product?.quantity}
+                                </span>
+                              </td>
+
+                              {/* Sales and Progress */}
+                              <td style={{ width: 150 }}>
+                                <div className="flex flex-col gap-1">
+                                  <span className="flex gap-1">
+                                    <span className="font-semibold">
+                                      {product?.sales}
+                                    </span>
+                                    <span>Sales</span>
+                                  </span>
+                                  <div className="progress line">
+                                    <div className="progress-wrapper">
+                                      <div className="progress-inner">
+                                        <div
+                                          className="progress-bg h-2 bg-success"
+                                          style={{
+                                            width: `${product?.progress}%`,
+                                          }}
+                                        />
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                              </div>
-                            </td>
+                              </td>
 
-                            {/* Actions */}
-                            <td style={{ width: 150 }}>
-                              <div className="flex items-center justify-end gap-3">
-                                <span
-                                  className="tooltip-wrapper"
-                                  onClick={() => handleEditProduct(product?.id)}
-                                >
-                                  <div className="text-xl cursor-pointer font-semibold">
-                                    <svg
-                                      stroke="currentColor"
-                                      fill="none"
-                                      strokeWidth={2}
-                                      viewBox="0 0 24 24"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      height="1em"
-                                      width="1em"
-                                    >
-                                      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                      <path d="M13.5 6.5l4 4" />
-                                    </svg>
-                                  </div>
-                                </span>
-                                <span
-                                  className="tooltip-wrapper"
-                                  onClick={() =>
-                                    handleDeleteProduct(product?.id)
-                                  } // Use an arrow function
-                                >
-                                  <div className="text-xl cursor-pointer font-semibold">
-                                    <svg
-                                      stroke="currentColor"
-                                      fill="none"
-                                      strokeWidth={2}
-                                      viewBox="0 0 24 24"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      height="1em"
-                                      width="1em"
-                                    >
-                                      <path d="M4 7l16 0" />
-                                      <path d="M10 11l0 6" />
-                                      <path d="M14 11l0 6" />
-                                      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                    </svg>
-                                  </div>
-                                </span>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
+                              {/* Actions */}
+                              <td style={{ width: 150 }}>
+                                <div className="flex items-center justify-end gap-3">
+                                  <span
+                                    className="tooltip-wrapper"
+                                    onClick={() =>
+                                      handleEditProduct(product?.id)
+                                    }
+                                  >
+                                    <div className="text-xl cursor-pointer font-semibold">
+                                      <svg
+                                        stroke="currentColor"
+                                        fill="none"
+                                        strokeWidth={2}
+                                        viewBox="0 0 24 24"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        height="1em"
+                                        width="1em"
+                                      >
+                                        <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+                                        <path d="M13.5 6.5l4 4" />
+                                      </svg>
+                                    </div>
+                                  </span>
+                                  <span
+                                    className="tooltip-wrapper"
+                                    onClick={() =>
+                                      handleDeleteProduct(product?.id)
+                                    } // Use an arrow function
+                                  >
+                                    <div className="text-xl cursor-pointer font-semibold">
+                                      <svg
+                                        stroke="currentColor"
+                                        fill="none"
+                                        strokeWidth={2}
+                                        viewBox="0 0 24 24"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        height="1em"
+                                        width="1em"
+                                      >
+                                        <path d="M4 7l16 0" />
+                                        <path d="M10 11l0 6" />
+                                        <path d="M14 11l0 6" />
+                                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                      </svg>
+                                    </div>
+                                  </span>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
                       </tbody>
                     </table>
                   </div>

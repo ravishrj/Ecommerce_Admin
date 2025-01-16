@@ -11,6 +11,7 @@ const Sign_In = ({
   setAuthClose,
   classProp,
   loadedComponent,
+
   setLoadedComponent,
 }) => {
   const router = useRouter();
@@ -31,28 +32,32 @@ const Sign_In = ({
     }
     try {
       const res = await signInWithEmailAndPassword(email, password);
-      console.log(res, "ROLE BASED");
+      //console.log(res, "ROLE BASED");
 
       if (res?.user) {
         console.log(res, "ROLE BASED");
-        sessionStorage.setItem("user", true);
-        localStorage.setItem("current-user", JSON.stringify(user));
+
+        localStorage.setItem("current-user", JSON.stringify(res?.user));
+
         sessionStorage.setItem("UserAuthentication", JSON.stringify(res));
-        const isSuccessful = true; // Replace with actual success condition
-        // if (isSuccessful) {
-        //   onLoginSuccess(); // Notify parent component of successful login
-        // }
+
         toast.success("Successfully logged in!");
-        setAuthClose(true);
         router.push("/");
+        setAuthClose(true);
+        setLoadedComponent("");
       } else {
         // Handle unexpected response from the server
+
         setAuthClose(false);
+        setLoadedComponent("signin");
+
         throw new Error("Unexpected server response.");
       }
     } catch (err) {
       console.error(err);
+
       setAuthClose(false);
+      setLoadedComponent("signin");
       //router.push("/sign-in");
       toast.error("Login failed! Please check your credentials.");
     }
@@ -72,6 +77,7 @@ const Sign_In = ({
       //     onLoginSuccess(); // Notify parent component of successful login
       //   }
       toast.success("Google sign-in successful");
+      setLoadedComponent("");
       setAuthClose(true);
       router.push("/");
     } catch (error) {
@@ -277,13 +283,13 @@ const Sign_In = ({
                 <div bis_skin_checked={1}>
                   <div className="mt-6 text-center" bis_skin_checked={1}>
                     <span>Don't have an account yet? </span>
-                    <a
+                    <button
                       className="hover:underline heading-text font-bold"
                       //href="/sign-up"
                       onClick={() => setLoadedComponent("signup")}
                     >
                       Sign up
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>

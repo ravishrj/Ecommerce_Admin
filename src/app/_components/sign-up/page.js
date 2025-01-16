@@ -7,6 +7,7 @@ import { auth, googleAuth, fireStore } from "../firebase/config";
 import { signInWithPopup, updateProfile } from "firebase/auth";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { signOut } from "firebase/auth";
 
 const Sign_up = ({
   setAuthClose,
@@ -70,14 +71,18 @@ const Sign_up = ({
         createdAt: new Date(),
       });
 
-      sessionStorage.setItem("user", true);
+      await signOut(auth);
 
+      // Remove any existing session or local storage data
+      localStorage.removeItem("current-user");
+      sessionStorage.removeItem("user");
+      setLoadedComponent("signin");
       toast.success("Sign-up successful! Click on Sign-in to Login");
-      loadedComponent("signin");
 
       // window.location.href = "/sign-in";
     } catch (e) {
       setAuthClose(false);
+      setLoadedComponent("signup");
       console.log(e);
       toast.error("Sign-up failed! Please try again.");
     }
@@ -207,13 +212,13 @@ const Sign_up = ({
             <div bis_skin_checked={1}>
               <div className="mt-6 text-center" bis_skin_checked={1}>
                 <span>Already have an account? </span>
-                <a
+                <button
                   className="hover:underline heading-text font-bold"
                   // href="/sign-in"
                   onClick={() => setLoadedComponent("signin")}
                 >
                   Sign in
-                </a>
+                </button>
               </div>
             </div>
           </div>

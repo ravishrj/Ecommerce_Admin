@@ -11,8 +11,8 @@ import { auth } from "./_components/firebase/config";
 import { useParams } from "next/navigation";
 import Sign_up from "./_components/sign-up/page";
 import Sign_In from "./_components/sign-in/page";
-//import { useAuthState } from "react-firebase-hooks/auth";
 
+import { fireStore, useAuth } from "./_components/firebase/config";
 export default function ClientLayout({ children }) {
   const [navbarToggle, setNavbarToggle] = useState(false);
   const [mobNavbarToggle, setMobNavabarToggle] = useState(false);
@@ -20,51 +20,19 @@ export default function ClientLayout({ children }) {
   const [isAuthClose, setAuthClose] = useState(false);
   const [username, setUsername] = useState("");
   //const [user, loading] = useAuthState(auth);
-  const [currentUser, setCurrentUser] = useState(null);
 
-  const [loadedComponent, seLoadedComponent] = useState("signin");
+  const [currentUser, setCurrentUser] = useState(null);
+  //const currentUser = useAuth();
+
+  const [loadedComponent, setLoadedComponent] = useState("signin");
 
   const [windowWidth, setWindowWidth] = useState(0);
   const router = useRouter();
   const params = useParams();
   const [activeRoute, setActiveRoute] = useState("");
 
-  // useEffect(() => {
-  //   // const current_user = localStorage.getItem("current-user");
-  //   if (user) setAuthClose(true);
-  //   else router.push("/sign-in");
-  // }, []);
-
-  // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged((user) => {
-  //     if (user) {
-  //       // User is signed in, update the state and local storage
-  //       const userData = {
-  //         uid: user.uid,
-  //         displayName: user.displayName || "User",
-  //         email: user.email,
-  //       };
-  //       // setUser(userData);
-  //       // setCurrentUser(userData);
-  //       // setUsername(user.displayName || "User");
-  //       setAuthClose(true);
-  //       localStorage.setItem("current-user", JSON.stringify(userData));
-  //     } else {
-  //       // User is signed out
-  //       // setUser(null);
-  //       // setCurrentUser(null);
-  //       // setUsername("");
-  //       router.push("/sign-in").then(() => {
-  //         window.location.reload(); // Force a reload after navigation
-  //       });
-  //       setAuthClose(false);
-  //       localStorage.removeItem("current-user");
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, []);
   useEffect(() => {
+    const userL = JSON.parse(localStorage.getItem("current-user"));
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         // User is signed in, update the state and local storage
@@ -75,7 +43,8 @@ export default function ClientLayout({ children }) {
         };
         console.log("userData", userData);
         setCurrentUser(userData);
-
+        setUsername(userData);
+        setLoadedComponent("");
         setAuthClose(true);
         localStorage.setItem("current-user", JSON.stringify(userData));
       } else {
@@ -94,7 +63,7 @@ export default function ClientLayout({ children }) {
     });
     console.log("currentUser", currentUser);
     return () => unsubscribe();
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -105,12 +74,6 @@ export default function ClientLayout({ children }) {
         "Active path"
       );
     }
-
-    // if (typeof window !== "undefined") {
-    //   const currentPath = window.location.href.split("/").pop();
-    //   setActiveRoute(currentPath);
-    // }
-
     // Function to update window width
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -138,7 +101,7 @@ export default function ClientLayout({ children }) {
         setAuthClose(false);
         setUsername("");
         // Show success toast message
-        seLoadedComponent("signin");
+        setLoadedComponent("signin");
         toast.success("You have successfully signed out.");
       })
       .catch((error) => {
@@ -4022,12 +3985,14 @@ export default function ClientLayout({ children }) {
         <>
           <Sign_In
             loadedComponent={loadedComponent}
-            seLoadedComponent={seLoadedComponent}
+            setAuthClose={setAuthClose}
+            setLoadedComponent={setLoadedComponent}
             classProp={loadedComponent === "signin" ? "is-visible" : ""}
           />
           <Sign_up
             loadedComponent={loadedComponent}
-            seLoadedComponent={seLoadedComponent}
+            setAuthClose={setAuthClose}
+            setLoadedComponent={setLoadedComponent}
             classProp={loadedComponent === "signup" ? "is-visible" : ""}
           />
         </>
