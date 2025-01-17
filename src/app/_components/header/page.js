@@ -1,3 +1,6 @@
+"use client";
+import { useState, useEffect } from "react";
+
 const Header = ({
   navbarToggle,
   setNavbarToggle,
@@ -6,7 +9,10 @@ const Header = ({
   mobNavbarToggle,
   isLogin,
   setLogin,
+  userdata,
 }) => {
+  const [currentUser, setCurrentUser] = useState(null);
+
   const handleNavbarToggle = () => {
     setNavbarToggle((prev) => !prev);
     {
@@ -14,6 +20,26 @@ const Header = ({
     }
   };
 
+  // useEffect(() => {
+  //   const userL = JSON.parse(localStorage.getItem("current-userdata"));
+  //   if (userL) {
+  //     const userData = {
+  //       uid: userL.uid,
+  //       displayName: userL.displayName || "User",
+  //       email: userL.email,
+  //     };
+  //     console.log("userData", userData);
+  //     setCurrentUser(userL);
+  //   } else {
+  //     setCurrentUser(null);
+
+  //     localStorage.removeItem("current-user");
+  //   }
+
+  //   console.log("currentUser", userL);
+  // }, []);
+
+  console.log(currentUser, "userdata in header");
   return (
     <header className="header shadow dark:shadow-2xl">
       <div className="header-wrapper" style={{ height: 64 }}>
@@ -145,7 +171,7 @@ const Header = ({
               <img
                 className="avatar-img avatar-circle"
                 loading="lazy"
-                src="/img/avatars/thumb-1.jpg"
+                src={currentUser?.profileImage}
                 alt="User Avatar"
               />
             </span>

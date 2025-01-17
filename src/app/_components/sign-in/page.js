@@ -2,11 +2,12 @@
 
 import React, { useRef } from "react";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { fireStore } from "../firebase/config";
 import { auth, googleAuth } from "../firebase/config";
 import { signInWithPopup } from "firebase/auth";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-
+import { doc, setDoc, getDoc } from "firebase/firestore";
 const Sign_In = ({
   setAuthClose,
   classProp,
@@ -21,6 +22,49 @@ const Sign_In = ({
 
   const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const email = emailRef.current.value;
+  //   const password = passwordRef.current.value;
+
+  //   if (!email || !password) {
+  //     toast.error("Please enter both email and password.");
+  //     return;
+  //   }
+  //   try {
+  //     const res = await signInWithEmailAndPassword(email, password);
+  //     //console.log(res, "ROLE BASED");
+
+  //     if (res?.user) {
+  //       console.log(res, "ROLE BASED");
+
+  //       localStorage.setItem("current-user", JSON.stringify(res?.user));
+
+  //       sessionStorage.setItem("UserAuthentication", JSON.stringify(res));
+
+  //       toast.success("Successfully logged in!");
+  //       router.push("/");
+  //       setAuthClose(true);
+  //       setLoadedComponent("");
+  //     } else {
+  //       // Handle unexpected response from the server
+
+  //       setAuthClose(false);
+  //       setLoadedComponent("signin");
+
+  //       throw new Error("Unexpected server response.");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+
+  //     setAuthClose(false);
+  //     setLoadedComponent("signin");
+  //     //router.push("/sign-in");
+  //     toast.error("Login failed! Please check your credentials.");
+  //   }
+  //   console.log({ email, password });
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const email = emailRef.current.value;
@@ -30,53 +74,109 @@ const Sign_In = ({
       toast.error("Please enter both email and password.");
       return;
     }
+
     try {
       const res = await signInWithEmailAndPassword(email, password);
-      //console.log(res, "ROLE BASED");
+      const user = res.user;
 
-      if (res?.user) {
-        console.log(res, "ROLE BASED");
+      if (user) {
+        console.log(user, "ROLE BASED");
 
-        localStorage.setItem("current-user", JSON.stringify(res?.user));
+        // 🔥 Fetch user data from Firestore
+        const userRef = doc(fireStore, "users", user.uid);
+        const userDoc = await getDoc(userRef);
 
-        sessionStorage.setItem("UserAuthentication", JSON.stringify(res));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+
+          // ✅ Store authentication & Firestore user data
+          localStorage.setItem("current-user", JSON.stringify(user));
+          sessionStorage.setItem(
+            "UserAuthentication",
+            JSON.stringify(userData)
+          );
+
+          console.log("User Firestore Data:", userData);
+        } else {
+          console.warn("User data not found in Firestore");
+        }
 
         toast.success("Successfully logged in!");
         router.push("/");
         setAuthClose(true);
         setLoadedComponent("");
       } else {
-        // Handle unexpected response from the server
-
         setAuthClose(false);
         setLoadedComponent("signin");
-
         throw new Error("Unexpected server response.");
       }
     } catch (err) {
       console.error(err);
-
       setAuthClose(false);
       setLoadedComponent("signin");
-      //router.push("/sign-in");
       toast.error("Login failed! Please check your credentials.");
     }
+
     console.log({ email, password });
   };
 
+  // const handleGoogleSignIn = async () => {
+  //   try {
+  //     const result = await signInWithPopup(auth, googleAuth);
+  //     console.log(result, "ROLE BASED");
+  //     const user = result.user;
+  //     console.log("Google sign-in successful", user);
+  //     sessionStorage.setItem("user", true);
+  //     localStorage.setItem("current-user", JSON.stringify(user));
+  //     const isSuccessful = true; // Replace with actual success condition
+  //     //   if (isSuccessful) {
+  //     //     onLoginSuccess(); // Notify parent component of successful login
+  //     //   }
+  //     toast.success("Google sign-in successful");
+  //     setLoadedComponent("");
+  //     setAuthClose(true);
+  //     router.push("/");
+  //   } catch (error) {
+  //     console.error("Google sign-in error", error);
+  //     toast.error("Google sign-in error");
+  //   }
+  // };
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, googleAuth);
-      console.log(result, "ROLE BASED");
       const user = result.user;
+
+      if (!user) {
+        toast.error("Google sign-in failed");
+        return;
+      }
+
       console.log("Google sign-in successful", user);
+
+      // Save user data in session & local storage
       sessionStorage.setItem("user", true);
       localStorage.setItem("current-user", JSON.stringify(user));
-      const isSuccessful = true; // Replace with actual success condition
-      //   if (isSuccessful) {
-      //     onLoginSuccess(); // Notify parent component of successful login
-      //   }
+
+      // 🔥 Check if user already exists in Firestore
+      const userRef = doc(fireStore, "users", user.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (!userDoc.exists()) {
+        // 🔥 Store new user data in Firestore
+        await setDoc(userRef, {
+          firstName: user.displayName || "",
+          email: user.email || "",
+
+          createdAt: new Date(),
+        });
+
+        console.log("New Google user added to Firestore");
+      } else {
+        console.log("User already exists in Firestore");
+      }
+
       toast.success("Google sign-in successful");
+
       setLoadedComponent("");
       setAuthClose(true);
       router.push("/");
@@ -85,7 +185,6 @@ const Sign_In = ({
       toast.error("Google sign-in error");
     }
   };
-
   const redirectToSignup = () => {
     document.getElementById("sign_component").style.display = "none";
     document.getElementById("sign_component").style.display = "none";

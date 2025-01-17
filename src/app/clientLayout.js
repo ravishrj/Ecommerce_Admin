@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import Header from "./_components/header/page";
 import Sidebar from "./_components/sidebar/page";
 import { useRouter } from "next/navigation";
-import userDashboard from "./userLoginDashboard/page";
+
 import { signOut } from "firebase/auth";
 import { auth } from "./_components/firebase/config";
 import { useParams } from "next/navigation";
@@ -13,18 +13,19 @@ import Sign_up from "./_components/sign-up/page";
 import Sign_In from "./_components/sign-in/page";
 
 import { fireStore, useAuth } from "./_components/firebase/config";
+import Loading from "./_components/loading/page";
 export default function ClientLayout({ children }) {
   const [navbarToggle, setNavbarToggle] = useState(false);
   const [mobNavbarToggle, setMobNavabarToggle] = useState(false);
   const [isLogin, setLogin] = useState(false);
   const [isAuthClose, setAuthClose] = useState(false);
-  const [username, setUsername] = useState("");
+  const [userdata, setUserData] = useState("");
   //const [user, loading] = useAuthState(auth);
 
   const [currentUser, setCurrentUser] = useState(null);
   //const currentUser = useAuth();
 
-  const [loadedComponent, setLoadedComponent] = useState("signin");
+  const [loadedComponent, setLoadedComponent] = useState("");
 
   const [windowWidth, setWindowWidth] = useState(0);
   const router = useRouter();
@@ -43,13 +44,13 @@ export default function ClientLayout({ children }) {
         };
         console.log("userData", userData);
         setCurrentUser(userData);
-        setUsername(userData);
+        setUserData(user);
         setLoadedComponent("");
         setAuthClose(true);
         localStorage.setItem("current-user", JSON.stringify(userData));
       } else {
         // User is signed out
-
+        setLoadedComponent("signin");
         setCurrentUser(null);
         setAuthClose(false);
         localStorage.removeItem("current-user");
@@ -97,11 +98,14 @@ export default function ClientLayout({ children }) {
         // Remove user session info from sessionStorage
         sessionStorage.removeItem("user");
         localStorage.removeItem("current-user");
+        localStorage.removeItem("current-userdata");
+
         setLogin(false);
         setAuthClose(false);
-        setUsername("");
-        // Show success toast message
-        setLoadedComponent("signin");
+        setUserData("");
+        setCurrentUser(""),
+          // Show success toast message
+          setLoadedComponent("signin");
         toast.success("You have successfully signed out.");
       })
       .catch((error) => {
@@ -137,6 +141,7 @@ export default function ClientLayout({ children }) {
                   mobNavbarToggle={mobNavbarToggle}
                   isLogin={isLogin}
                   setLogin={setLogin}
+                  userdata={userdata}
                 />
                 {children}
               </div>
@@ -3995,6 +4000,7 @@ export default function ClientLayout({ children }) {
             setLoadedComponent={setLoadedComponent}
             classProp={loadedComponent === "signup" ? "is-visible" : ""}
           />
+          {!loadedComponent && <Loading />}
         </>
       )}
     </>
