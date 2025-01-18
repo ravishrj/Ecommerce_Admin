@@ -101,25 +101,6 @@ const Header = ({
     }
   }, [currentUser]);
 
-  // useEffect(() => {
-  //   const userL = JSON.parse(localStorage.getItem("current-userdata"));
-  //   if (userL) {
-  //     const userData = {
-  //       uid: userL.uid,
-  //       displayName: userL.displayName || "User",
-  //       email: userL.email,
-  //     };
-  //     console.log("userData", userData);
-  //     setCurrentUser(userL);
-  //   } else {
-  //     setCurrentUser(null);
-
-  //     localStorage.removeItem("current-user");
-  //   }
-
-  //   console.log("currentUser", userL);
-  // }, []);
-
   console.log(currentUser, "userdata in header");
   return (
     <header className="header shadow dark:shadow-2xl">

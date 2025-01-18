@@ -2,7 +2,7 @@
 import { useState, useRef } from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { doc, setDoc } from "firebase/firestore";
-
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, googleAuth, fireStore } from "../firebase/config";
 import { signInWithPopup, updateProfile } from "firebase/auth";
 import { toast } from "react-toastify";
@@ -23,6 +23,71 @@ const Sign_up = ({
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // const [createUserWithEmailAndPassword] =
+  //   useCreateUserWithEmailAndPassword(auth);
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   if (password !== confirmPassword) {
+  //     toast.error("Passwords do not match");
+  //     return;
+  //   }
+
+  //   if (!emailRef.current.value || !password) {
+  //     toast.error("Email and password are required");
+  //     return;
+  //   }
+
+  //   if (!userNameRef.current.value) {
+  //     toast.error("user name is  required");
+  //     return;
+  //   }
+
+  //   try {
+  //     // Create user with email and password
+  //     const userCredential = await createUserWithEmailAndPassword(
+  //       emailRef.current.value,
+  //       password
+  //     ).catch((error) => {
+  //       console.error("Error creating user:", error);
+  //       toast.error("Error creating user: " + error.message);
+  //     });
+
+  //     if (!userCredential) return;
+
+  //     const user = userCredential.user;
+  //     const name = userNameRef.current.value;
+
+  //     // Set display name
+  //     await updateProfile(user, {
+  //       displayName: name,
+  //     });
+
+  //     // Store user data in Firestore
+  //     await setDoc(doc(fireStore, "users", user.uid), {
+  //       Name: name,
+  //       email: user?.email,
+  //       createdAt: new Date(),
+  //     });
+
+  //     await signOut(auth);
+
+  //     // Remove any existing session or local storage data
+  //     localStorage.removeItem("current-user");
+  //     sessionStorage.removeItem("user");
+  //     setLoadedComponent("signin");
+  //     toast.success("Sign-up successful! Click on Sign-in to Login");
+
+  //     // window.location.href = "/sign-in";
+  //   } catch (e) {
+  //     setAuthClose(false);
+  //     setLoadedComponent("signup");
+  //     console.log(e);
+  //     toast.error("Sign-up failed! Please try again.");
+  //   }
+  // };
+
   const [createUserWithEmailAndPassword] =
     useCreateUserWithEmailAndPassword(auth);
 
@@ -40,51 +105,65 @@ const Sign_up = ({
     }
 
     if (!userNameRef.current.value) {
-      toast.error("user name is  required");
+      toast.error("User name is required");
       return;
     }
 
     try {
-      // Create user with email and password
-      const userCredential = await createUserWithEmailAndPassword(
-        emailRef.current.value,
-        password
-      ).catch((error) => {
-        console.error("Error creating user:", error);
-        toast.error("Error creating user: " + error.message);
-      });
+      const email = emailRef.current.value;
+      const passwordValue = password;
+      const name = userNameRef.current.value;
 
+      // 🔥 Check if user already exists in Firestore
+      const usersRef = collection(fireStore, "users");
+      const querySnapshot = await getDocs(
+        query(usersRef, where("email", "==", email))
+      );
+
+      if (!querySnapshot.empty) {
+        toast.error("User already exists with this email!");
+        return;
+      }
+
+      // ✅ Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(
+        email,
+        passwordValue
+      );
       if (!userCredential) return;
 
       const user = userCredential.user;
-      const name = userNameRef.current.value;
 
-      // Set display name
-      await updateProfile(user, {
-        displayName: name,
-      });
+      // ✅ Set display name
+      await updateProfile(user, { displayName: name });
 
-      // Store user data in Firestore
+      // ✅ Store user data in Firestore
       await setDoc(doc(fireStore, "users", user.uid), {
         Name: name,
-        email: user?.email,
+        email: user.email,
         createdAt: new Date(),
       });
 
-      await signOut(auth);
+      await signOut(auth); // Sign user out after registration
 
-      // Remove any existing session or local storage data
+      // ✅ Clear local storage/session
       localStorage.removeItem("current-user");
       sessionStorage.removeItem("user");
-      setLoadedComponent("signin");
-      toast.success("Sign-up successful! Click on Sign-in to Login");
 
-      // window.location.href = "/sign-in";
-    } catch (e) {
+      setLoadedComponent("signin");
+      toast.success("Sign-up successful! Click on Sign-in to login.");
+    } catch (error) {
+      console.error("Error during sign-up:", error);
+
+      // ✅ Explicitly handle duplicate email error
+      if (error.code === "auth/email-already-in-use") {
+        toast.error("An account with this email already exists.");
+      } else {
+        toast.error("Sign-up failed! Please try again.");
+      }
+
       setAuthClose(false);
       setLoadedComponent("signup");
-      console.log(e);
-      toast.error("Sign-up failed! Please try again.");
     }
   };
 
