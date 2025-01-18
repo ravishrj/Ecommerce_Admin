@@ -1,5 +1,10 @@
 "use client";
-import { useState, useEffect } from "react";
+
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { fireStore } from "@/app/_components/firebase/config";
+import { updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, arrayUnion } from "firebase/firestore";
 
 const Header = ({
   navbarToggle,
@@ -12,6 +17,18 @@ const Header = ({
   userdata,
 }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email2: "",
+    phone: "",
+    countryCode: "",
+    profileImage: "",
+    country: "",
+    address: "",
+    city: "",
+    postcode: "",
+  });
 
   const handleNavbarToggle = () => {
     setNavbarToggle((prev) => !prev);
@@ -19,6 +36,70 @@ const Header = ({
       isMobile && setMobNavabarToggle((prev) => !prev);
     }
   };
+
+  useEffect(() => {
+    const userL = JSON.parse(localStorage.getItem("current-user"));
+    if (userL) {
+      const userData = {
+        uid: userL.uid,
+        displayName: userL.displayName || "User",
+        email: userL.email,
+      };
+      console.log("userData", userData);
+      setCurrentUser(userData);
+    } else {
+      setCurrentUser(null);
+
+      localStorage.removeItem("current-user");
+    }
+
+    console.log("currentUser", currentUser);
+  }, []);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!currentUser || !currentUser.uid) {
+        console.warn("User ID not found! Waiting for currentUser...");
+        return;
+      }
+
+      try {
+        console.log(currentUser.uid, "Fetching data for userId");
+
+        const userRef = doc(fireStore, "users", currentUser.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+          console.log("User data not found in Firestore");
+          return;
+        }
+
+        let existingData = userDoc.data();
+
+        // ✅ Directly accessing fields without userData
+        setFormData({
+          firstName: existingData?.firstName || "",
+          lastName: existingData?.lastName || "",
+          email2: existingData?.email || "",
+          phone: existingData?.phone || "",
+          country: existingData?.country || "",
+          address: existingData?.address || "",
+          city: existingData?.city || "",
+          postcode: existingData?.postcode || "",
+          profileImage: existingData?.profileImage || "",
+        });
+
+        console.log("Fetched user data:", existingData);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        toast.error("Failed to fetch user data. Try again.");
+      }
+    };
+
+    if (currentUser) {
+      fetchUserData();
+    }
+  }, [currentUser]);
 
   // useEffect(() => {
   //   const userL = JSON.parse(localStorage.getItem("current-userdata"));
@@ -171,7 +252,7 @@ const Header = ({
               <img
                 className="avatar-img avatar-circle"
                 loading="lazy"
-                src={currentUser?.profileImage}
+                src={formData?.profileImage}
                 alt="User Avatar"
               />
             </span>

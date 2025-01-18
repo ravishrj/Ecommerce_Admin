@@ -66,7 +66,7 @@ const Sign_up = ({
 
       // Store user data in Firestore
       await setDoc(doc(fireStore, "users", user.uid), {
-        firstName: name,
+        Name: name,
         email: user?.email,
         createdAt: new Date(),
       });

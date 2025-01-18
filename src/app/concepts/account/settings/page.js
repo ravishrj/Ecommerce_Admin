@@ -9,16 +9,16 @@ import { doc, getDoc, setDoc, arrayUnion } from "firebase/firestore";
 const Account_Setting = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [formData, setFormData] = useState({
-    firstName: "Angelina",
-    lastName: "Gotelli",
-    email: "carolyn_h@hotmail.com",
-    phone: "121231234",
-    countryCode: "+1",
-    profileImage: "/img/avatars/thumb-1.jpg",
-    country: "US",
-    address: "123 Main St",
-    city: "New York",
-    postcode: "10001",
+    firstName: "",
+    lastName: "",
+    email2: "",
+    phone: "",
+    countryCode: "",
+    profileImage: "",
+    country: "",
+    address: "",
+    city: "",
+    postcode: "",
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -30,18 +30,41 @@ const Account_Setting = () => {
   };
 
   // Handle File Upload
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      setFormData({ ...formData, profileImage: URL.createObjectURL(file) });
+  // const handleFileChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setSelectedFile(file);
+  //     setFormData({ ...formData, profileImage: URL.createObjectURL(file) });
+  //   }
+  // };
+  const handleFileChange = (event) => {
+    const file = event.target.files[0]; // Get the first file (only one)
+
+    if (!file) return; // If no file is selected, exit
+
+    if (file.size > 500 * 1024) {
+      alert(`${file.name} exceeds 500KB. Please upload a smaller file.`);
+      return;
     }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData({ ...formData, profileImage: reader.result }); // Store as base64
+    };
+    reader.readAsDataURL(file);
   };
 
   // Remove Selected Image
+  // const handleRemoveImage = () => {
+  //   setSelectedFile(null);
+  //   setFormData({ ...formData, profileImage: "" });
+  // };
   const handleRemoveImage = () => {
-    setSelectedFile(null);
-    setFormData({ ...formData, profileImage: "" });
+    setSelectedFile(null); // Reset selected file state
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      profileImage: "", // Clear profile image
+    }));
   };
 
   useEffect(() => {
@@ -63,61 +86,51 @@ const Account_Setting = () => {
     console.log("currentUser", currentUser);
   }, []);
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   console.log(currentUser, "currentUserid");
-  //   const userId = currentUser.uid;
-  //   if (!userId) {
-  //     toast.error("User ID not found!");
-  //     return;
-  //   }
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!currentUser || !currentUser.uid) {
+        console.warn("User ID not found! Waiting for currentUser...");
+        return;
+      }
 
-  //   try {
-  //     const userRef = doc(fireStore, "users", userId);
-  //     const userDoc = await getDoc(userRef);
-  //     if (!userDoc.exists()) {
-  //       toast.error("User not found");
-  //       return;
-  //     }
-  //     const existingData = userDoc.data();
+      try {
+        console.log(currentUser.uid, "Fetching data for userId");
 
-  //     // Updated user data
-  //     const updatedUserData = {
-  //       ...existingData, // Keep existing data
-  //       firstName: formData.firstName,
-  //       lastName: formData.lastName,
-  //       email: formData.email,
-  //       phone: formData.phone,
-  //       country: formData.country,
-  //       address: formData.address,
-  //       city: formData.city,
-  //       postcode: formData.postcode,
-  //       profileImage: formData.profileImage, // Keeping profile image updated
-  //       updatedAt: new Date(), // Optional: track last update
-  //     };
+        const userRef = doc(fireStore, "users", currentUser.uid);
+        const userDoc = await getDoc(userRef);
 
-  //     // Update the Firestore document
-  //     await updateDoc(userRef, { userData: updatedUserData });
+        if (!userDoc.exists()) {
+          console.log("User data not found in Firestore");
+          return;
+        }
 
-  //     toast.success("Profile updated successfully!");
-  //     localStorage.setItem("current-userdata", JSON.stringify(updatedUserData));
+        let existingData = userDoc.data();
 
-  //     setFormData({
-  //       firstName: "",
-  //       lastName: "",
-  //       email: "",
-  //       phone: "",
-  //       country: "",
-  //       address: "",
-  //       city: "",
-  //       postcode: "",
-  //       profileImage: "",
-  //     });
-  //   } catch (error) {
-  //     console.error("Error updating user:", error);
-  //     toast.error("Failed to update profile. Try again.");
-  //   }
-  // };
+        // ✅ Directly accessing fields without userData
+        setFormData({
+          firstName: existingData?.firstName || "",
+          lastName: existingData?.lastName || "",
+          email2: existingData?.email || "",
+          phone: existingData?.phone || "",
+          country: existingData?.country || "",
+          address: existingData?.address || "",
+          city: existingData?.city || "",
+          postcode: existingData?.postcode || "",
+          profileImage: existingData?.profileImage || "",
+        });
+
+        console.log("Fetched user data:", existingData);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        toast.error("Failed to fetch user data. Try again.");
+      }
+    };
+
+    if (currentUser) {
+      fetchUserData();
+    }
+  }, [currentUser]); // 🔥 Added currentUser as a dependency
+  // 🔥 Runs when `currentUser` changes
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -140,7 +153,7 @@ const Account_Setting = () => {
         ...existingData, // Keep existing user data
         firstName: formData.firstName || existingData.firstName || "",
         lastName: formData.lastName || existingData.lastName || "",
-        email: formData.email || existingData.email || "",
+        email2: formData.email2 || existingData.email2 || "",
         phone: formData.phone || existingData.phone || "",
         country: formData.country || existingData.country || "",
         address: formData.address || existingData.address || "",
@@ -160,7 +173,7 @@ const Account_Setting = () => {
       setFormData({
         firstName: "",
         lastName: "",
-        email: "",
+        email2: "",
         phone: "",
         country: "",
         address: "",
@@ -744,10 +757,10 @@ const Account_Setting = () => {
                         <label className="form-label mb-2">Email</label>
                         <input
                           className="input input-md h-12 focus:ring-primary"
-                          name="email"
+                          name="email2"
                           type="email"
                           placeholder="Email"
-                          value={formData.email}
+                          value={formData.email2}
                           onChange={handleChange}
                         />
                       </div>

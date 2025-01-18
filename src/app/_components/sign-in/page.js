@@ -164,7 +164,7 @@ const Sign_In = ({
       if (!userDoc.exists()) {
         // 🔥 Store new user data in Firestore
         await setDoc(userRef, {
-          firstName: user.displayName || "",
+          Name: user.displayName || "",
           email: user.email || "",
 
           createdAt: new Date(),
