@@ -166,7 +166,7 @@ const Sign_In = ({
         await setDoc(userRef, {
           Name: user.displayName || "",
           email: user.email || "",
-
+          role: "ADMIN",
           createdAt: new Date(),
         });
 

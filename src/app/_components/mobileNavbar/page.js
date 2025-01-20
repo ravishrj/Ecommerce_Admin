@@ -2,6 +2,7 @@
 import { useState } from "react";
 const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
   const [productToggle, setProductToggle] = useState(false);
+  const [adminToggle, setAdminToggle] = useState(false);
   return (
     <>
       <div
@@ -185,6 +186,9 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                         <div
                           className="menu-collapse-item"
                           role="presentation"
+                          onClick={() => {
+                            setAdminToggle((prev) => !prev);
+                          }}
                           bis_skin_checked={1}
                         >
                           <span className="flex items-center gap-2">
@@ -205,11 +209,15 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                                 <path d="M197.58,129.06,146,110l-19-51.62a15.92,15.92,0,0,0-29.88,0L78,110l-51.62,19a15.92,15.92,0,0,0,0,29.88L78,178l19,51.62a15.92,15.92,0,0,0,29.88,0L146,178l51.62-19a15.92,15.92,0,0,0,0-29.88ZM137,164.22a8,8,0,0,0-4.74,4.74L112,223.85,91.78,169A8,8,0,0,0,87,164.22L32.15,144,87,123.78A8,8,0,0,0,91.78,119L112,64.15,132.22,119a8,8,0,0,0,4.74,4.74L191.85,144ZM144,40a8,8,0,0,1,8-8h16V16a8,8,0,0,1,16,0V32h16a8,8,0,0,1,0,16H184V64a8,8,0,0,1-16,0V48H152A8,8,0,0,1,144,40ZM248,88a8,8,0,0,1-8,8h-8v8a8,8,0,0,1-16,0V96h-8a8,8,0,0,1,0-16h8V72a8,8,0,0,1,16,0v8h8A8,8,0,0,1,248,88Z" />
                               </svg>
                             </span>
-                            <span>AI</span>
+                            <span>Admins</span>
                           </span>
                           <span
                             className="text-lg mt-1"
-                            style={{ transform: "rotate(0deg)" }}
+                            style={{
+                              transform: adminToggle
+                                ? "rotate(-180deg)"
+                                : "rotate(0deg)",
+                            }}
                           >
                             <svg
                               stroke="currentColor"
@@ -229,8 +237,8 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                         <ul
                           className=""
                           style={{
-                            opacity: 0,
-                            height: 0,
+                            opacity: adminToggle ? 1 : 0,
+                            height: adminToggle ? "auto" : 0,
                             overflow: "hidden",
                           }}
                         >
@@ -255,10 +263,10 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                             </div>
                             <a
                               className="flex items-center gap-2 h-full w-full"
-                              href="/concepts/ai/chat"
+                              href="/concepts/Admin/admin-list"
                               target=""
                             >
-                              <span>Chat</span>
+                              <span>List</span>
                             </a>
                           </div>
                           <div

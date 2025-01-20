@@ -27,7 +27,7 @@ export default function ClientLayout({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
 
   const [loadedComponent, setLoadedComponent] = useState("");
-
+  const [signupLoading, setSignupLoading] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
   const router = useRouter();
   const params = useParams();
@@ -55,12 +55,6 @@ export default function ClientLayout({ children }) {
         setCurrentUser(null);
         setAuthClose(false);
         localStorage.removeItem("current-user");
-
-        // Force navigation to sign-in and reload the page
-        // if (router.pathname !== "/sign-in") {
-
-        //   router.push("/sign-in");
-        // }
       }
     });
     console.log("currentUser", currentUser);
@@ -98,6 +92,7 @@ export default function ClientLayout({ children }) {
 
   return (
     <>
+      {signupLoading && <Loading />}
       {isAuthClose && (
         <>
           {" "}
@@ -166,6 +161,7 @@ export default function ClientLayout({ children }) {
             loadedComponent={loadedComponent}
             setAuthClose={setAuthClose}
             setLoadedComponent={setLoadedComponent}
+            setSignupLoading={setSignupLoading}
             classProp={loadedComponent === "signup" ? "is-visible" : ""}
           />
           {!loadedComponent && <Loading />}

@@ -23,7 +23,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" dir="ltr">
       <head>
         <link href="/style.css" rel="stylesheet" />
         <link href="/profile.css" rel="stylesheet" />

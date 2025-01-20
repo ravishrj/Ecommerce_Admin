@@ -14,6 +14,7 @@ const Sign_up = ({
   classProp,
   loadedComponent,
   setLoadedComponent,
+  setSignupLoading,
 }) => {
   const router = useRouter();
   const userNameRef = useRef("");
@@ -141,10 +142,12 @@ const Sign_up = ({
       await setDoc(doc(fireStore, "users", user.uid), {
         Name: name,
         email: user.email,
+        role: "ADMIN",
         createdAt: new Date(),
       });
-
+      setSignupLoading(true);
       await signOut(auth); // Sign user out after registration
+      setSignupLoading(false);
 
       // ✅ Clear local storage/session
       localStorage.removeItem("current-user");
