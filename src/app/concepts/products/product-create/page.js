@@ -821,7 +821,7 @@ const Create_Product = () => {
                       <h4 className="mb-6">Attribute</h4>
 
                       {/* Category */}
-                      <div className="form-item vertical">
+                      {/* <div className="form-item vertical">
                         <label className="form-label mb-2">Category</label>
                         <div>
                           <input
@@ -833,6 +833,30 @@ const Create_Product = () => {
                             onChange={handleInputAttributeChange}
                             name="category"
                           />
+                        </div>
+                      </div> */}
+
+                      <div className="form-item vertical">
+                        <label className="form-label mb-2">Category</label>
+                        <div>
+                          <select
+                            className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
+                            value={attribute.category}
+                            onChange={handleInputAttributeChange}
+                            name="category"
+                          >
+                            <option value="">Select a category</option>
+                            <option value="Palato alto">Palato Alto</option>
+                            <option value="Cisco">Cisco</option>
+                            <option value="Watch guard">Watch Guard</option>
+                            <option value="Fortinet">Fortinet</option>
+                            <option value="Sophos">Sophos</option>
+                            <option value="Juniper">Juniper</option>
+                            <option value="Barakuda">Barakuda</option>
+                            <option value="Cloudflare">Cloudflare</option>
+                            <option value="Digicert">Digicert</option>
+                            <option value="Global sign">Global Sign</option>
+                          </select>
                         </div>
                       </div>
 

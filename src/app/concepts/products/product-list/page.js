@@ -52,6 +52,7 @@ const Product_List = () => {
       console.error("Error deleting product:", error.message);
     }
   };
+
   const handleEditProduct = async (id) => {
     router.push(`/concepts/products/product-edit/12?id=${id}`);
   };

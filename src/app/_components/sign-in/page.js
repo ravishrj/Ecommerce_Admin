@@ -307,12 +307,15 @@ const Sign_In = ({
                         </div>
                       </div>
                       <div className="mb-7 mt-2" bis_skin_checked={1}>
-                        <a
+                        <button
                           className="hover:underline font-semibold heading-text mt-2 underline"
-                          href="/forgot-password"
+                          // href="/forgot-password"
+                          onClick={() => {
+                            setLoadedComponent("forget_password");
+                          }}
                         >
                           Forgot password
-                        </a>
+                        </button>
                       </div>
                       <button
                         className="button bg-primary hover:bg-primary-mild text-neutral h-12 rounded-xl px-5 py-2 w-full button-press-feedback"

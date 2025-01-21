@@ -16,6 +16,7 @@ import { fireStore, useAuth } from "./_components/firebase/config";
 import Loading from "./_components/loading/page";
 import Profile_Dropdown from "./_components/profile_dropdown/page";
 import Mobile_Navbar from "./_components/mobileNavbar/page";
+import Forget_Password from "./_components/forget-password/page";
 export default function ClientLayout({ children }) {
   const [navbarToggle, setNavbarToggle] = useState(false);
   const [mobNavbarToggle, setMobNavabarToggle] = useState(false);
@@ -92,7 +93,6 @@ export default function ClientLayout({ children }) {
 
   return (
     <>
-      {signupLoading && <Loading />}
       {isAuthClose && (
         <>
           {" "}
@@ -163,6 +163,14 @@ export default function ClientLayout({ children }) {
             setLoadedComponent={setLoadedComponent}
             setSignupLoading={setSignupLoading}
             classProp={loadedComponent === "signup" ? "is-visible" : ""}
+          />
+          <Forget_Password
+            loadedComponent={loadedComponent}
+            setAuthClose={setAuthClose}
+            setLoadedComponent={setLoadedComponent}
+            classProp={
+              loadedComponent === "forget_password" ? "is-visible" : ""
+            }
           />
           {!loadedComponent && <Loading />}
         </>

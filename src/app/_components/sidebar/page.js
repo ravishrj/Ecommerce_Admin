@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 
 const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
   const [productToggle, setProductToggle] = useState(false);
   const [adminToggle, setAdminToggle] = useState(false);
+  const [scriptToggle, setScriptToggle] = useState(false);
   return (
     <div
       className={
@@ -17,9 +19,9 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
       }}
       bis_skin_checked={1}
     >
-      <a
+      <Link
         className="side-nav-header flex flex-col justify-center"
-        href="/dashboards/ecommerce"
+        href="/"
         style={{ height: 64 }}
       >
         <div
@@ -33,7 +35,7 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
             src="/img/logo/logo-light-full.png"
           />
         </div>
-      </a>
+      </Link>
       <div className="side-nav-content" bis_skin_checked={1}>
         <div
           data-simplebar="init"
@@ -91,7 +93,7 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                   bis_skin_checked={1}
                                   style={{ height: 48 }}
                                 >
-                                  <a
+                                  <Link
                                     className="flex items-center gap-2 h-full w-full"
                                     href="/dashboards/ecommerce"
                                     target=""
@@ -113,7 +115,7 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M104,216a16,16,0,1,1-16-16A16,16,0,0,1,104,216Zm88-16a16,16,0,1,0,16,16A16,16,0,0,0,192,200ZM239.71,74.14l-25.64,92.28A24.06,24.06,0,0,1,191,184H92.16A24.06,24.06,0,0,1,69,166.42L33.92,40H16a8,8,0,0,1,0-16H40a8,8,0,0,1,7.71,5.86L57.19,64H232a8,8,0,0,1,7.71,10.14ZM221.47,80H61.64l22.81,82.14A8,8,0,0,0,92.16,168H191a8,8,0,0,0,7.71-5.86Z" />
                                       </svg>
                                     </span>
-                                  </a>
+                                  </Link>
                                 </div>
                               </span>
                               <span className="tooltip-wrapper">
@@ -122,7 +124,7 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                   bis_skin_checked={1}
                                   style={{ height: 48 }}
                                 >
-                                  <a
+                                  <Link
                                     className="flex items-center gap-2 h-full w-full"
                                     href="/dashboards/project"
                                     target=""
@@ -144,7 +146,7 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M152,224a8,8,0,0,1-8,8H112a8,8,0,0,1,0-16h32A8,8,0,0,1,152,224ZM128,112a12,12,0,1,0-12-12A12,12,0,0,0,128,112Zm95.62,43.83-12.36,55.63a16,16,0,0,1-25.51,9.11L158.51,200h-61L70.25,220.57a16,16,0,0,1-25.51-9.11L32.38,155.83a16.09,16.09,0,0,1,3.32-13.71l28.56-34.26a123.07,123.07,0,0,1,8.57-36.67c12.9-32.34,36-52.63,45.37-59.85a16,16,0,0,1,19.6,0c9.34,7.22,32.47,27.51,45.37,59.85a123.07,123.07,0,0,1,8.57,36.67l28.56,34.26A16.09,16.09,0,0,1,223.62,155.83ZM99.43,184h57.14c21.12-37.54,25.07-73.48,11.74-106.88C156.55,47.64,134.49,29,128,24c-6.51,5-28.57,23.64-40.33,53.12C74.36,110.52,78.31,146.46,99.43,184Zm-15,5.85Q68.28,160.5,64.83,132.16L48,152.36,60.36,208l.18-.13ZM208,152.36l-16.83-20.2q-3.42,28.28-19.56,57.69l23.85,18,.18.13Z" />
                                       </svg>
                                     </span>
-                                  </a>
+                                  </Link>
                                 </div>
                               </span>
                               <span className="tooltip-wrapper">
@@ -220,7 +222,7 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                 bis_skin_checked={1}
                                 style={{ height: 48 }}
                               >
-                                <a
+                                <Link
                                   className="flex items-center gap-2 h-full w-full"
                                   href="/dashboards/ecommerce"
                                   target=""
@@ -243,7 +245,7 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                     </svg>
                                   </span>
                                   <span>Ecommerce</span>
-                                </a>
+                                </Link>
                               </div>
                               <div
                                 className="menu-item menu-item-hoverable"
@@ -578,7 +580,7 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                   bis_skin_checked={1}
                                   style={{ height: 48 }}
                                 >
-                                  <a
+                                  <Link
                                     className="flex items-center gap-2 h-full w-full"
                                     href="/concepts/calendar"
                                     target=""
@@ -600,7 +602,7 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-96-88v64a8,8,0,0,1-16,0V132.94l-4.42,2.22a8,8,0,0,1-7.16-14.32l16-8A8,8,0,0,1,112,120Zm59.16,30.45L152,176h16a8,8,0,0,1,0,16H136a8,8,0,0,1-6.4-12.8l28.78-38.37A8,8,0,1,0,145.07,132a8,8,0,1,1-13.85-8A24,24,0,0,1,176,136,23.76,23.76,0,0,1,171.16,150.45Z" />
                                       </svg>
                                     </span>
-                                  </a>
+                                  </Link>
                                 </div>
                               </span>
                               <span className="tooltip-wrapper">
@@ -609,7 +611,7 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                   bis_skin_checked={1}
                                   style={{ height: 48 }}
                                 >
-                                  <a
+                                  <Link
                                     className="flex items-center gap-2 h-full w-full"
                                     href="/concepts/file-manager"
                                     target=""
@@ -631,7 +633,7 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M245,110.64A16,16,0,0,0,232,104H216V88a16,16,0,0,0-16-16H130.67L102.94,51.2a16.14,16.14,0,0,0-9.6-3.2H40A16,16,0,0,0,24,64V208a8,8,0,0,0,8,8H211.1a8,8,0,0,0,7.59-5.47l28.49-85.47A16.05,16.05,0,0,0,245,110.64ZM93.34,64,123.2,86.4A8,8,0,0,0,128,88h72v16H69.77a16,16,0,0,0-15.18,10.94L40,158.7V64Zm112,136H43.1l26.67-80H232Z" />
                                       </svg>
                                     </span>
-                                  </a>
+                                  </Link>
                                 </div>
                               </span>
                               <span className="tooltip-wrapper">
@@ -640,7 +642,7 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                   bis_skin_checked={1}
                                   style={{ height: 48 }}
                                 >
-                                  <a
+                                  <Link
                                     className="flex items-center gap-2 h-full w-full"
                                     href="/concepts/mail"
                                     target=""
@@ -662,7 +664,7 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48Zm-96,85.15L52.57,64H203.43ZM98.71,128,40,181.81V74.19Zm11.84,10.85,12,11.05a8,8,0,0,0,10.82,0l12-11.05,58,53.15H52.57ZM157.29,128,216,74.18V181.82Z" />
                                       </svg>
                                     </span>
-                                  </a>
+                                  </Link>
                                 </div>
                               </span>
                               <span className="tooltip-wrapper">
@@ -784,13 +786,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
                                       href="/concepts/Admin/admin-list"
                                       target=""
                                     >
                                       <span>List</span>
-                                    </a>
+                                    </Link>
                                   </div>
                                   <div
                                     className="menu-item menu-item-hoverable items-center gap-2"
@@ -811,13 +813,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
                                       href="/concepts/ai/image"
                                       target=""
                                     >
                                       <span>Image</span>
-                                    </a>
+                                    </Link>
                                   </div>
                                 </ul>
                               </div>
@@ -828,6 +830,9 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                 <div
                                   className="menu-collapse-item"
                                   role="presentation"
+                                  onClick={() => {
+                                    setScriptToggle((prev) => !prev);
+                                  }}
                                   bis_skin_checked={1}
                                 >
                                   <span className="flex items-center gap-2">
@@ -848,11 +853,15 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M88,144V128a8,8,0,0,1,16,0v16a8,8,0,0,1-16,0Zm40,8a8,8,0,0,0,8-8V120a8,8,0,0,0-16,0v24A8,8,0,0,0,128,152Zm32,0a8,8,0,0,0,8-8V112a8,8,0,0,0-16,0v32A8,8,0,0,0,160,152Zm56-72v96h8a8,8,0,0,1,0,16H136v17.38a24,24,0,1,1-16,0V192H32a8,8,0,0,1,0-16h8V80A16,16,0,0,1,24,64V48A16,16,0,0,1,40,32H216a16,16,0,0,1,16,16V64A16,16,0,0,1,216,80ZM136,232a8,8,0,1,0-8,8A8,8,0,0,0,136,232ZM40,64H216V48H40ZM200,80H56v96H200Z" />
                                       </svg>
                                     </span>
-                                    <span>Projects</span>
+                                    <span>Scripts</span>
                                   </span>
                                   <span
                                     className="text-lg mt-1"
-                                    style={{ transform: "rotate(0deg)" }}
+                                    style={{
+                                      transform: scriptToggle
+                                        ? "rotate(-180deg)"
+                                        : "rotate(0deg)",
+                                    }}
                                   >
                                     <svg
                                       stroke="currentColor"
@@ -872,15 +881,19 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                 <ul
                                   className=""
                                   style={{
-                                    opacity: 0,
-                                    height: 0,
+                                    opacity: scriptToggle ? 1 : 0,
+                                    height: scriptToggle ? "auto" : 0,
                                     overflow: "hidden",
                                   }}
                                 >
                                   <div
                                     className="menu-item menu-item-hoverable items-center gap-2"
                                     bis_skin_checked={1}
-                                    style={{ height: 48 }}
+                                    style={{
+                                      opacity: scriptToggle ? 1 : 0,
+                                      height: scriptToggle ? "auto" : 0,
+                                      overflow: "hidden",
+                                    }}
                                   >
                                     <div bis_skin_checked={1}>
                                       <svg
@@ -896,13 +909,12 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
-                                      href="/concepts/projects/scrum-board"
-                                      target=""
+                                      href="/concepts/scripts/create-script"
                                     >
-                                      <span>Scrum Board</span>
-                                    </a>
+                                      <span>Create Scripts</span>
+                                    </Link>
                                   </div>
                                   <div
                                     className="menu-item menu-item-hoverable items-center gap-2"
@@ -923,94 +935,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
-                                      href="/concepts/projects/project-list"
+                                      href="/concepts/scripts/script-list"
                                       target=""
                                     >
-                                      <span>List</span>
-                                    </a>
-                                  </div>
-                                  <div
-                                    className="menu-item menu-item-hoverable items-center gap-2"
-                                    bis_skin_checked={1}
-                                    style={{ height: 48 }}
-                                  >
-                                    <div bis_skin_checked={1}>
-                                      <svg
-                                        stroke="currentColor"
-                                        fill="currentColor"
-                                        strokeWidth={0}
-                                        viewBox="0 0 256 256"
-                                        className="text-3xl w-[24px] opacity-25"
-                                        height="1em"
-                                        width="1em"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
-                                      </svg>
-                                    </div>
-                                    <a
-                                      className="flex items-center gap-2 h-full w-full"
-                                      href="/concepts/projects/project-details/27"
-                                      target=""
-                                    >
-                                      <span>Details</span>
-                                    </a>
-                                  </div>
-                                  <div
-                                    className="menu-item menu-item-hoverable items-center gap-2"
-                                    bis_skin_checked={1}
-                                    style={{ height: 48 }}
-                                  >
-                                    <div bis_skin_checked={1}>
-                                      <svg
-                                        stroke="currentColor"
-                                        fill="currentColor"
-                                        strokeWidth={0}
-                                        viewBox="0 0 256 256"
-                                        className="text-3xl w-[24px] opacity-25"
-                                        height="1em"
-                                        width="1em"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
-                                      </svg>
-                                    </div>
-                                    <a
-                                      className="flex items-center gap-2 h-full w-full"
-                                      href="/concepts/projects/tasks"
-                                      target=""
-                                    >
-                                      <span>Tasks</span>
-                                    </a>
-                                  </div>
-                                  <div
-                                    className="menu-item menu-item-hoverable items-center gap-2"
-                                    bis_skin_checked={1}
-                                    style={{ height: 48 }}
-                                  >
-                                    <div bis_skin_checked={1}>
-                                      <svg
-                                        stroke="currentColor"
-                                        fill="currentColor"
-                                        strokeWidth={0}
-                                        viewBox="0 0 256 256"
-                                        className="text-3xl w-[24px] opacity-25"
-                                        height="1em"
-                                        width="1em"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
-                                      </svg>
-                                    </div>
-                                    <a
-                                      className="flex items-center gap-2 h-full w-full"
-                                      href="/concepts/projects/tasks/1"
-                                      target=""
-                                    >
-                                      <span>Issue</span>
-                                    </a>
+                                      <span>Scripts-List</span>
+                                    </Link>
                                   </div>
                                 </ul>
                               </div>
@@ -1089,13 +1020,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
                                       href="/concepts/customers/customer-list"
                                       target=""
                                     >
                                       <span>List</span>
-                                    </a>
+                                    </Link>
                                   </div>
                                   <div
                                     className="menu-item menu-item-hoverable items-center gap-2"
@@ -1116,13 +1047,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
                                       href="/concepts/customers/customer-edit/1"
                                       target=""
                                     >
                                       <span>Edit</span>
-                                    </a>
+                                    </Link>
                                   </div>
                                   <div
                                     className="menu-item menu-item-hoverable items-center gap-2"
@@ -1143,13 +1074,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
                                       href="/concepts/customers/customer-create"
                                       target=""
                                     >
                                       <span>Create</span>
-                                    </a>
+                                    </Link>
                                   </div>
                                   <div
                                     className="menu-item menu-item-hoverable items-center gap-2"
@@ -1170,13 +1101,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
                                       href="/concepts/customers/customer-details/1"
                                       target=""
                                     >
                                       <span>Details</span>
-                                    </a>
+                                    </Link>
                                   </div>
                                 </ul>
                               </div>
@@ -1262,13 +1193,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
                                       href="/concepts/products/product-list"
                                       target=""
                                     >
                                       <span>List</span>
-                                    </a>
+                                    </Link>
                                   </div>
                                   <div
                                     className="menu-item menu-item-hoverable items-center gap-2"
@@ -1289,13 +1220,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
                                       href="/concepts/products/product-edit/12"
                                       target=""
                                     >
                                       <span>Edit</span>
-                                    </a>
+                                    </Link>
                                   </div>
                                   <div
                                     className="menu-item menu-item-hoverable items-center gap-2"
@@ -1316,13 +1247,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
                                       href="/concepts/products/product-create"
                                       target=""
                                     >
                                       <span>Create</span>
-                                    </a>
+                                    </Link>
                                   </div>
                                 </ul>
                               </div>
@@ -1401,13 +1332,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
                                       href="/concepts/orders/order-list"
                                       target=""
                                     >
                                       <span>List</span>
-                                    </a>
+                                    </Link>
                                   </div>
                                   <div
                                     className="menu-item menu-item-hoverable items-center gap-2"
@@ -1428,13 +1359,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
                                       href="/concepts/orders/order-edit/95954"
                                       target=""
                                     >
                                       <span>Edit</span>
-                                    </a>
+                                    </Link>
                                   </div>
                                   <div
                                     className="menu-item menu-item-hoverable items-center gap-2"
@@ -1455,13 +1386,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
                                       href="/concepts/orders/order-create"
                                       target=""
                                     >
                                       <span>Create</span>
-                                    </a>
+                                    </Link>
                                   </div>
                                   <div
                                     className="menu-item menu-item-hoverable items-center gap-2"
