@@ -1,8 +1,10 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
   const [productToggle, setProductToggle] = useState(false);
   const [adminToggle, setAdminToggle] = useState(false);
+  const [scriptToggle, setScriptToggle] = useState(false);
   return (
     <>
       <div
@@ -63,7 +65,7 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                         bis_skin_checked={1}
                         style={{ height: 48 }}
                       >
-                        <a
+                        <Link
                           className="flex items-center gap-2 h-full w-full"
                           href="/dashboards/ecommerce"
                           target=""
@@ -86,14 +88,14 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                             </svg>
                           </span>
                           <span>Ecommerce</span>
-                        </a>
+                        </Link>
                       </div>
                       <div
                         className="menu-item menu-item-hoverable"
                         bis_skin_checked={1}
                         style={{ height: 48 }}
                       >
-                        <a
+                        <Link
                           className="flex items-center gap-2 h-full w-full"
                           href="/dashboards/project"
                           target=""
@@ -116,14 +118,14 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                             </svg>
                           </span>
                           <span>Project</span>
-                        </a>
+                        </Link>
                       </div>
                       <div
                         className="menu-item menu-item-hoverable"
                         bis_skin_checked={1}
                         style={{ height: 48 }}
                       >
-                        <a
+                        <Link
                           className="flex items-center gap-2 h-full w-full"
                           href="/dashboards/marketing"
                           target=""
@@ -146,7 +148,7 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                             </svg>
                           </span>
                           <span>Marketing</span>
-                        </a>
+                        </Link>
                       </div>
                       <div
                         className="menu-item menu-item-hoverable"
@@ -261,13 +263,13 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                                 <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                               </svg>
                             </div>
-                            <a
+                            <Link
                               className="flex items-center gap-2 h-full w-full"
                               href="/concepts/Admin/admin-list"
                               target=""
                             >
                               <span>List</span>
-                            </a>
+                            </Link>
                           </div>
                           <div
                             className="menu-item menu-item-hoverable items-center gap-2"
@@ -288,17 +290,17 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                                 <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                               </svg>
                             </div>
-                            <a
+                            <Link
                               className="flex items-center gap-2 h-full w-full"
                               href="/concepts/ai/image"
                               target=""
                             >
                               <span>Image</span>
-                            </a>
+                            </Link>
                           </div>
                         </ul>
                       </div>
-                      <div className="menu-collapse" bis_skin_checked={1}>
+                      {/* <div className="menu-collapse" bis_skin_checked={1}>
                         <div
                           className="menu-collapse-item"
                           role="presentation"
@@ -482,6 +484,122 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                             >
                               <span>Issue</span>
                             </a>
+                          </div>
+                        </ul>
+                      </div> */}
+                      <div className="menu-collapse" bis_skin_checked={1}>
+                        <div
+                          className="menu-collapse-item"
+                          role="presentation"
+                          onClick={() => {
+                            setScriptToggle((prev) => !prev);
+                          }}
+                          bis_skin_checked={1}
+                        >
+                          <span className="flex items-center gap-2">
+                            <span className="text-2xl">
+                              <svg
+                                stroke="currentColor"
+                                fill="currentColor"
+                                strokeWidth={0}
+                                viewBox="0 0 256 256"
+                                height="1em"
+                                width="1em"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path d="M208,72V184H48V72Z" opacity="0.2" />
+                                <path d="M88,144V128a8,8,0,0,1,16,0v16a8,8,0,0,1-16,0Zm40,8a8,8,0,0,0,8-8V120a8,8,0,0,0-16,0v24A8,8,0,0,0,128,152Zm32,0a8,8,0,0,0,8-8V112a8,8,0,0,0-16,0v32A8,8,0,0,0,160,152Zm56-72v96h8a8,8,0,0,1,0,16H136v17.38a24,24,0,1,1-16,0V192H32a8,8,0,0,1,0-16h8V80A16,16,0,0,1,24,64V48A16,16,0,0,1,40,32H216a16,16,0,0,1,16,16V64A16,16,0,0,1,216,80ZM136,232a8,8,0,1,0-8,8A8,8,0,0,0,136,232ZM40,64H216V48H40ZM200,80H56v96H200Z" />
+                              </svg>
+                            </span>
+                            <span>Scripts</span>
+                          </span>
+                          <span
+                            className="text-lg mt-1"
+                            style={{
+                              transform: scriptToggle
+                                ? "rotate(-180deg)"
+                                : "rotate(0deg)",
+                            }}
+                          >
+                            <svg
+                              stroke="currentColor"
+                              fill="none"
+                              strokeWidth={2}
+                              viewBox="0 0 24 24"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              height="1em"
+                              width="1em"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path d="M6 9l6 6l6 -6" />
+                            </svg>
+                          </span>
+                        </div>
+                        <ul
+                          className=""
+                          style={{
+                            opacity: scriptToggle ? 1 : 0,
+                            height: scriptToggle ? "auto" : 0,
+                            overflow: "hidden",
+                          }}
+                        >
+                          <div
+                            className="menu-item menu-item-hoverable items-center gap-2"
+                            bis_skin_checked={1}
+                            style={{
+                              opacity: scriptToggle ? 1 : 0,
+                              height: scriptToggle ? "auto" : 0,
+                              overflow: "hidden",
+                            }}
+                          >
+                            <div bis_skin_checked={1}>
+                              <svg
+                                stroke="currentColor"
+                                fill="currentColor"
+                                strokeWidth={0}
+                                viewBox="0 0 256 256"
+                                className="text-3xl w-[24px] opacity-25"
+                                height="1em"
+                                width="1em"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
+                              </svg>
+                            </div>
+                            <Link
+                              className="flex items-center gap-2 h-full w-full"
+                              href="/concepts/scripts/create-script"
+                            >
+                              <span>Create Scripts</span>
+                            </Link>
+                          </div>
+                          <div
+                            className="menu-item menu-item-hoverable items-center gap-2"
+                            bis_skin_checked={1}
+                            style={{ height: 48 }}
+                          >
+                            <div bis_skin_checked={1}>
+                              <svg
+                                stroke="currentColor"
+                                fill="currentColor"
+                                strokeWidth={0}
+                                viewBox="0 0 256 256"
+                                className="text-3xl w-[24px] opacity-25"
+                                height="1em"
+                                width="1em"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
+                              </svg>
+                            </div>
+                            <Link
+                              className="flex items-center gap-2 h-full w-full"
+                              href="/concepts/scripts/script-list"
+                              target=""
+                            >
+                              <span>Scripts-List</span>
+                            </Link>
                           </div>
                         </ul>
                       </div>
@@ -728,13 +846,13 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                                 <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                               </svg>
                             </div>
-                            <a
+                            <Link
                               className="flex items-center gap-2 h-full w-full"
                               href="/concepts/products/product-list"
                               target=""
                             >
                               <span>List</span>
-                            </a>
+                            </Link>
                           </div>
                           <div
                             className="menu-item menu-item-hoverable items-center gap-2"
@@ -755,13 +873,13 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                                 <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                               </svg>
                             </div>
-                            <a
+                            <Link
                               className="flex items-center gap-2 h-full w-full"
                               href="/concepts/products/product-edit/12"
                               target=""
                             >
                               <span>Edit</span>
-                            </a>
+                            </Link>
                           </div>
                           <div
                             className="menu-item menu-item-hoverable items-center gap-2"
@@ -782,13 +900,13 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                                 <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                               </svg>
                             </div>
-                            <a
+                            <Link
                               className="flex items-center gap-2 h-full w-full"
                               href="/concepts/products/product-create"
                               target=""
                             >
                               <span>Create</span>
-                            </a>
+                            </Link>
                           </div>
                         </ul>
                       </div>
@@ -1027,13 +1145,13 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                                 <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                               </svg>
                             </div>
-                            <a
+                            <Link
                               className="flex items-center gap-2 h-full w-full"
                               href="/concepts/account/settings"
                               target=""
                             >
                               <span>Settings</span>
-                            </a>
+                            </Link>
                           </div>
                           <div
                             className="menu-item menu-item-hoverable items-center gap-2"
@@ -1054,13 +1172,13 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                                 <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                               </svg>
                             </div>
-                            <a
+                            <Link
                               className="flex items-center gap-2 h-full w-full"
                               href="/concepts/account/activity-log"
                               target=""
                             >
                               <span>Activity log</span>
-                            </a>
+                            </Link>
                           </div>
                           <div
                             className="menu-item menu-item-hoverable items-center gap-2"
@@ -1108,13 +1226,13 @@ const Mobile_Navbar = ({ setMobNavabarToggle, isLogin, setLogin }) => {
                                 <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                               </svg>
                             </div>
-                            <a
+                            <Link
                               className="flex items-center gap-2 h-full w-full"
                               href="/concepts/account/pricing"
                               target=""
                             >
                               <span>Pricing</span>
-                            </a>
+                            </Link>
                           </div>
                         </ul>
                       </div>
