@@ -8,9 +8,10 @@ import { doc } from "firebase/firestore";
 const Create_Product = () => {
   const [productInfo, setProductInfo] = useState({
     productName: "",
-
+    quantity: "", // Added quantity field
     productCode: "",
     productDescription: "",
+    how_product_work: "",
   });
   const [productImages, setProductImages] = useState([]);
   const [priceInfo, setPriceInfo] = useState({
@@ -25,6 +26,23 @@ const Create_Product = () => {
     Tags: [],
     Brands: "",
   });
+  const [faq, setFaq] = useState([
+    { question: "", answer: "" }, // Initial empty entry
+  ]);
+
+  const handleFaqChange = (e, index, field) => {
+    const updatedFaqs = [...faq];
+    updatedFaqs[index][field] = e.target.value;
+    setFaq(updatedFaqs);
+  };
+
+  const addFaqField = () => {
+    setFaq([...faq, { question: "", answer: "" }]);
+  };
+  const removeFaqField = (index) => {
+    setFaq((prevFaq) => prevFaq.filter((_, i) => i !== index));
+  };
+
   const [createProductInfo, setcreateProductInfo] = useState([]);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +52,8 @@ const Create_Product = () => {
       productInfo, // Contains productName, productCode, productDescription
       productImages, // Array of images
       priceInfo, // Contains Price, costPrice, discount_Price, tax_Rate
-      attribute, // Contains category, Tags, Brands
+      attribute,
+      faq,
     };
 
     // Add the new product data to the createProductInfo array
@@ -62,6 +81,8 @@ const Create_Product = () => {
       productName: "",
       productCode: "",
       productDescription: "",
+      quantity: "", // Added quantity field
+      how_product_work: "",
     });
 
     setProductImages([]); // Reset productImages to an empty array
@@ -78,6 +99,7 @@ const Create_Product = () => {
       Tags: [],
       Brands: "",
     });
+    setFaq({ question: "", answer: "" });
   };
 
   const handleInputChange = (e) => {
@@ -209,299 +231,6 @@ const Create_Product = () => {
                     role="presentation"
                     bis_skin_checked={1}
                   >
-                    {/* <div className="card-body" bis_skin_checked={1}>
-                      <h4 className="mb-6">Basic Information</h4>
-                      <div bis_skin_checked={1}>
-                        <div
-                          className="form-item vertical"
-                          bis_skin_checked={1}
-                        >
-                          <label className="form-label mb-2">
-                            Product name
-                          </label>
-                          <div className="" bis_skin_checked={1}>
-                            <input
-                              className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary"
-                              autoComplete="off"
-                              placeholder="Product Name"
-                              type="text"
-                              defaultValue=""
-                              name="name"
-                            />
-                          </div>
-                        </div>
-                        <div
-                          className="form-item vertical"
-                          bis_skin_checked={1}
-                        >
-                          <label className="form-label mb-2">
-                            Product code
-                          </label>
-                          <div className="" bis_skin_checked={1}>
-                            <input
-                              className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary"
-                              autoComplete="off"
-                              placeholder="Product Code"
-                              type="text"
-                              defaultValue=""
-                              name="productCode"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="form-item vertical" bis_skin_checked={1}>
-                        <label className="form-label mb-2">Description</label>
-                        <div className="" bis_skin_checked={1}>
-                          <div
-                            className="rich-text-editor rounded-xl ring-1 ring-gray-200 dark:ring-gray-600 border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 pt-3"
-                            bis_skin_checked={1}
-                          >
-                            <div
-                              className="flex gap-x-1 gap-y-2 px-2"
-                              bis_skin_checked={1}
-                            >
-                              <button
-                                className="tool-button text-xl heading-text hover:text-primary flex items-center p-1.5 rounded-lg"
-                                type="button"
-                                title="Bold"
-                              >
-                                <svg
-                                  stroke="currentColor"
-                                  fill="none"
-                                  strokeWidth={2}
-                                  viewBox="0 0 24 24"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  height="1em"
-                                  width="1em"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path d="M7 5h6a3.5 3.5 0 0 1 0 7h-6z" />
-                                  <path d="M13 12h1a3.5 3.5 0 0 1 0 7h-7v-7" />
-                                </svg>
-                              </button>
-                              <button
-                                className="tool-button text-xl heading-text hover:text-primary flex items-center p-1.5 rounded-lg"
-                                type="button"
-                                title="Italic"
-                              >
-                                <svg
-                                  stroke="currentColor"
-                                  fill="none"
-                                  strokeWidth={2}
-                                  viewBox="0 0 24 24"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  height="1em"
-                                  width="1em"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path d="M11 5l6 0" />
-                                  <path d="M7 19l6 0" />
-                                  <path d="M14 5l-4 14" />
-                                </svg>
-                              </button>
-                              <button
-                                className="tool-button text-xl heading-text hover:text-primary flex items-center p-1.5 rounded-lg"
-                                type="button"
-                                title="Strikethrough"
-                              >
-                                <svg
-                                  stroke="currentColor"
-                                  fill="none"
-                                  strokeWidth={2}
-                                  viewBox="0 0 24 24"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  height="1em"
-                                  width="1em"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path d="M5 12l14 0" />
-                                  <path d="M16 6.5a4 2 0 0 0 -4 -1.5h-1a3.5 3.5 0 0 0 0 7h2a3.5 3.5 0 0 1 0 7h-1.5a4 2 0 0 1 -4 -1.5" />
-                                </svg>
-                              </button>
-                              <button
-                                className="tool-button text-xl heading-text hover:text-primary flex items-center p-1.5 rounded-lg"
-                                type="button"
-                                title="Code"
-                              >
-                                <svg
-                                  stroke="currentColor"
-                                  fill="none"
-                                  strokeWidth={2}
-                                  viewBox="0 0 24 24"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  height="1em"
-                                  width="1em"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path d="M7 8l-4 4l4 4" />
-                                  <path d="M17 8l4 4l-4 4" />
-                                  <path d="M14 4l-4 16" />
-                                </svg>
-                              </button>
-                              <button
-                                className="tool-button text-xl heading-text hover:text-primary flex items-center p-1.5 rounded-lg"
-                                type="button"
-                                title="Blockquote"
-                              >
-                                <svg
-                                  stroke="currentColor"
-                                  fill="none"
-                                  strokeWidth={2}
-                                  viewBox="0 0 24 24"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  height="1em"
-                                  width="1em"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path d="M10 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v6c0 2.667 -1.333 4.333 -4 5" />
-                                  <path d="M19 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v6c0 2.667 -1.333 4.333 -4 5" />
-                                </svg>
-                              </button>
-                              <div
-                                className="dropdown-toggle"
-                                role="menuitem"
-                                aria-expanded="false"
-                                aria-haspopup="menu"
-                                id=":r2v:"
-                                bis_skin_checked={1}
-                              >
-                                <button
-                                  className="tool-button text-xl heading-text hover:text-primary flex items-center p-1.5 rounded-lg"
-                                  type="button"
-                                  title="Heading"
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth={2}
-                                    viewBox="0 0 24 24"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M6 12h12" />
-                                    <path d="M6 20V4" />
-                                    <path d="M18 20V4" />
-                                  </svg>
-                                </button>
-                              </div>
-                              <button
-                                className="tool-button text-xl heading-text hover:text-primary flex items-center p-1.5 rounded-lg"
-                                type="button"
-                                title="Bullet List"
-                              >
-                                <svg
-                                  stroke="currentColor"
-                                  fill="none"
-                                  strokeWidth={2}
-                                  viewBox="0 0 24 24"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  height="1em"
-                                  width="1em"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path d="M9 6l11 0" />
-                                  <path d="M9 12l11 0" />
-                                  <path d="M9 18l11 0" />
-                                  <path d="M5 6l0 .01" />
-                                  <path d="M5 12l0 .01" />
-                                  <path d="M5 18l0 .01" />
-                                </svg>
-                              </button>
-                              <button
-                                className="tool-button text-xl heading-text hover:text-primary flex items-center p-1.5 rounded-lg"
-                                type="button"
-                                title="Ordered List"
-                              >
-                                <svg
-                                  stroke="currentColor"
-                                  fill="none"
-                                  strokeWidth={2}
-                                  viewBox="0 0 24 24"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  height="1em"
-                                  width="1em"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path d="M11 6h9" />
-                                  <path d="M11 12h9" />
-                                  <path d="M12 18h8" />
-                                  <path d="M4 16a2 2 0 1 1 4 0c0 .591 -.5 1 -1 1.5l-3 2.5h4" />
-                                  <path d="M6 10v-6l-2 2" />
-                                </svg>
-                              </button>
-                              <button
-                                className="tool-button text-xl heading-text hover:text-primary flex items-center p-1.5 rounded-lg"
-                                type="button"
-                                title="Code Block"
-                              >
-                                <svg
-                                  stroke="currentColor"
-                                  fill="none"
-                                  strokeWidth={2}
-                                  viewBox="0 0 24 24"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  height="1em"
-                                  width="1em"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path d="M15 12h.01" />
-                                  <path d="M12 12h.01" />
-                                  <path d="M9 12h.01" />
-                                  <path d="M6 19a2 2 0 0 1 -2 -2v-4l-1 -1l1 -1v-4a2 2 0 0 1 2 -2" />
-                                  <path d="M18 19a2 2 0 0 0 2 -2v-4l1 -1l-1 -1v-4a2 2 0 0 0 -2 -2" />
-                                </svg>
-                              </button>
-                              <button
-                                className="tool-button text-xl heading-text hover:text-primary flex items-center p-1.5 rounded-lg"
-                                type="button"
-                                title="Horizontal Rule"
-                              >
-                                <svg
-                                  stroke="currentColor"
-                                  fill="none"
-                                  strokeWidth={2}
-                                  viewBox="0 0 24 24"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  height="1em"
-                                  width="1em"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path d="M5 12l14 0" />
-                                </svg>
-                              </button>
-                            </div>
-                            <div
-                              className="max-h-[600px] overflow-auto px-2 prose prose-p:text-sm prose-p:dark:text-gray-400 max-w-full"
-                              bis_skin_checked={1}
-                            >
-                              <div
-                                // contentEditable="true"
-                                translate="no"
-                                className="tiptap ProseMirror m-2 focus:outline-none"
-                                tabIndex={0}
-                                bis_skin_checked={1}
-                              >
-                                <p>
-                                  <br className="ProseMirror-trailingBreak" />
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div> */}
                     <div className="card-body">
                       <h4 className="mb-6">Basic Information</h4>
 
@@ -529,6 +258,21 @@ const Create_Product = () => {
                           type="text"
                           name="productCode"
                           value={productInfo.productCode}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+
+                      {/* Product Quantity */}
+
+                      <div className="form-item vertical">
+                        <label className="form-label mb-2">Quantity</label>
+                        <input
+                          className="input input-md h-12 focus:ring-primary focus:border-primary"
+                          autoComplete="off"
+                          placeholder="Enter Quantity"
+                          type="number"
+                          name="quantity"
+                          value={productInfo.quantity}
                           onChange={handleInputChange}
                         />
                       </div>
@@ -569,6 +313,48 @@ const Create_Product = () => {
                           placeholder="Write a detailed description here..."
                           name="productDescription"
                           value={productInfo.productDescription}
+                          onChange={handleInputChange}
+                        ></textarea>
+                      </div>
+
+                      {/* How product work */}
+                      <div className="form-item vertical">
+                        <label className="form-label mb-2">
+                          How Product Works
+                        </label>
+
+                        {/* Formatting Buttons */}
+                        <div className="flex gap-x-2 mb-2">
+                          <button
+                            type="button"
+                            className="tool-button text-xl heading-text hover:text-primary p-1.5 rounded-lg border"
+                            onClick={() => applyTextStyle("bold")}
+                          >
+                            Bold
+                          </button>
+                          <button
+                            type="button"
+                            className="tool-button text-xl heading-text hover:text-primary p-1.5 rounded-lg border"
+                            onClick={() => applyTextStyle("italic")}
+                          >
+                            Italic
+                          </button>
+                          <button
+                            type="button"
+                            className="tool-button text-xl heading-text hover:text-primary p-1.5 rounded-lg border"
+                            onClick={() => applyTextStyle("strike")}
+                          >
+                            Strikethrough
+                          </button>
+                        </div>
+
+                        {/* Textarea */}
+                        <textarea
+                          id="howProductWorksTextarea"
+                          className="input input-md h-24 focus:ring-primary focus:border-primary"
+                          placeholder="Explain how the product works..."
+                          name="how_product_work"
+                          value={productInfo.how_product_work}
                           onChange={handleInputChange}
                         ></textarea>
                       </div>
@@ -676,67 +462,6 @@ const Create_Product = () => {
                     role="presentation"
                     bis_skin_checked={1}
                   >
-                    {/* <div className="card-body" bis_skin_checked={1}>
-                      <h4 className="mb-2">Product Image</h4>
-                      <p>
-                        Choose a product photo or simply drag and drop up to 5
-                        photos here.
-                      </p>
-                      <div className="mt-4" bis_skin_checked={1}>
-                        <div
-                          className="form-item vertical mb-4"
-                          bis_skin_checked={1}
-                        >
-                          <label className="form-label" />
-                          <div className="" bis_skin_checked={1}>
-                            <div
-                              className="upload upload-draggable hover:border-primary"
-                              bis_skin_checked={1}
-                            >
-                              <input
-                                className="upload-input draggable"
-                                title=""
-                                type="file"
-                                defaultValue=""
-                              />
-                              <div
-                                className="max-w-full flex flex-col px-4 py-8 justify-center items-center"
-                                bis_skin_checked={1}
-                              >
-                                <div
-                                  className="text-[60px]"
-                                  bis_skin_checked={1}
-                                >
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="currentColor"
-                                    strokeWidth={0}
-                                    viewBox="0 0 256 256"
-                                    height="1em"
-                                    width="1em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path d="M216,44H72A12,12,0,0,0,60,56V76H40A12,12,0,0,0,28,88V200a12,12,0,0,0,12,12H184a12,12,0,0,0,12-12V180h20a12,12,0,0,0,12-12V56A12,12,0,0,0,216,44ZM68,56a4,4,0,0,1,4-4H216a4,4,0,0,1,4,4v72.4l-16.89-16.89a12,12,0,0,0-17,0l-22.83,22.83L116.49,87.51a12,12,0,0,0-17,0L68,119ZM188,200a4,4,0,0,1-4,4H40a4,4,0,0,1-4-4V88a4,4,0,0,1,4-4H60v84a12,12,0,0,0,12,12H188Zm28-28H72a4,4,0,0,1-4-4V130.34l37.17-37.17a4,4,0,0,1,5.66,0l49.66,49.66a4,4,0,0,0,5.65,0l25.66-25.66a4,4,0,0,1,5.66,0L220,139.71V168A4,4,0,0,1,216,172ZM164,84a8,8,0,1,1,8,8A8,8,0,0,1,164,84Z" />
-                                  </svg>
-                                </div>
-                                <p className="flex flex-col items-center mt-2">
-                                  <span className="text-gray-800 dark:text-white">
-                                    Drop your image here, or{" "}
-                                  </span>
-                                  <span className="text-primary">
-                                    Click to browse
-                                  </span>
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <p>
-                        Image formats: .jpg, .jpeg, .png, preferred size: 1:1,
-                        file size is restricted to a maximum of 500kb.
-                      </p>
-                    </div> */}
                     <div className="card-body">
                       <h4 className="mb-2">Product Images</h4>
                       <p>
@@ -846,16 +571,13 @@ const Create_Product = () => {
                             name="category"
                           >
                             <option value="">Select a category</option>
-                            <option value="Palato alto">Palato Alto</option>
-                            <option value="Cisco">Cisco</option>
-                            <option value="Watch guard">Watch Guard</option>
-                            <option value="Fortinet">Fortinet</option>
-                            <option value="Sophos">Sophos</option>
-                            <option value="Juniper">Juniper</option>
-                            <option value="Barakuda">Barakuda</option>
-                            <option value="Cloudflare">Cloudflare</option>
-                            <option value="Digicert">Digicert</option>
-                            <option value="Global sign">Global Sign</option>
+                            <option value="Norton">Norton</option>
+                            <option value="Webroot">Webroot</option>
+                            <option value="McAfee">McAfee</option>
+                            <option value="Trend Micro">Trend Micro</option>
+                            <option value="BitDefender">BitDefender</option>
+                            <option value="AVG">AVG</option>
+                            <option value="Kaspersky">Kaspersky</option>
                           </select>
                         </div>
                       </div>
@@ -890,6 +612,97 @@ const Create_Product = () => {
                             name="Brands"
                           />
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="card card-border"
+                    role="presentation"
+                    bis_skin_checked={1}
+                  >
+                    <div className="card-body">
+                      <h4 className="mb-6">Frequently Asked Questions</h4>
+
+                      {/* FAQ List */}
+                      {faq.map((item, index) => (
+                        <div
+                          key={index}
+                          className="mb-4 relative flex items-start gap-4"
+                        >
+                          <div className="w-full">
+                            {/* Question */}
+                            <div className="form-item vertical">
+                              <label className="form-label mb-2">
+                                Question
+                              </label>
+                              <div>
+                                <input
+                                  className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
+                                  autoComplete="off"
+                                  placeholder="Enter your question"
+                                  type="text"
+                                  value={item.question}
+                                  onChange={(e) =>
+                                    handleFaqChange(e, index, "question")
+                                  }
+                                />
+                              </div>
+                            </div>
+
+                            {/* Answer */}
+                            <div className="form-item vertical mt-2">
+                              <label className="form-label mb-2">Answer</label>
+                              <div>
+                                <input
+                                  className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
+                                  autoComplete="off"
+                                  placeholder="Enter the answer"
+                                  type="text"
+                                  value={item.answer}
+                                  onChange={(e) =>
+                                    handleFaqChange(e, index, "answer")
+                                  }
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Delete Button */}
+                          <button
+                            className="text-error hover:text-red-600 mt-6"
+                            type="button"
+                            onClick={() => removeFaqField(index)}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="feather feather-trash-2"
+                            >
+                              <polyline points="3 6 5 6 21 6"></polyline>
+                              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                              <line x1="10" y1="11" x2="10" y2="17"></line>
+                              <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+
+                      {/* Add More FAQ Button */}
+                      <div className="form-item vertical mt-4">
+                        <button
+                          className="button bg-primary hover:bg-primary-mild text-neutral h-12 rounded-xl px-5 py-2 w-full"
+                          type="button"
+                          onClick={addFaqField}
+                        >
+                          + Add Another FAQ
+                        </button>
                       </div>
                     </div>
                   </div>
