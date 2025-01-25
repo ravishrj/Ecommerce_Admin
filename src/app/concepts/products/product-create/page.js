@@ -4,6 +4,7 @@ import { collection, addDoc } from "firebase/firestore";
 import { fireStore } from "@/app/_components/firebase/config";
 import { Timestamp } from "firebase/firestore";
 import { doc } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 const Create_Product = () => {
   const [productInfo, setProductInfo] = useState({
@@ -12,6 +13,7 @@ const Create_Product = () => {
     productCode: "",
     productDescription: "",
     how_product_work: "",
+    productFeatures: [], // Array to store features
   });
   const [productImages, setProductImages] = useState([]);
   const [priceInfo, setPriceInfo] = useState({
@@ -72,6 +74,7 @@ const Create_Product = () => {
         // createdAt: new Date(),
         createdAt: Timestamp.now(), // Use Firestore's Timestamp
       });
+      toast.success("Congratulatios! product created successsFully");
     } catch (error) {
       console.error("Errorng document: ", error);
     }
@@ -83,6 +86,7 @@ const Create_Product = () => {
       productDescription: "",
       quantity: "", // Added quantity field
       how_product_work: "",
+      productFeatures: [], // Array to store features
     });
 
     setProductImages([]); // Reset productImages to an empty array
@@ -99,7 +103,27 @@ const Create_Product = () => {
       Tags: [],
       Brands: "",
     });
-    setFaq({ question: "", answer: "" });
+    setFaq([{ question: "", answer: "" }]);
+  };
+
+  const handleFeatureChange = (e, index) => {
+    const newFeatures = [...productInfo.productFeatures];
+    newFeatures[index] = e.target.value;
+    setProductInfo({ ...productInfo, productFeatures: newFeatures });
+  };
+
+  const addFeature = () => {
+    setProductInfo({
+      ...productInfo,
+      productFeatures: [...productInfo.productFeatures, ""],
+    });
+  };
+
+  const removeFeature = (index) => {
+    const newFeatures = productInfo.productFeatures.filter(
+      (_, i) => i !== index
+    );
+    setProductInfo({ ...productInfo, productFeatures: newFeatures });
   };
 
   const handleInputChange = (e) => {
@@ -357,6 +381,74 @@ const Create_Product = () => {
                           value={productInfo.how_product_work}
                           onChange={handleInputChange}
                         ></textarea>
+                      </div>
+
+                      {/* product features */}
+                      <div className="form-item vertical">
+                        <label className="form-label mb-2">
+                          Product Features
+                        </label>
+
+                        {/* Formatting Buttons */}
+                        <div className="flex gap-x-2 mb-2">
+                          <button
+                            type="button"
+                            className="tool-button text-xl heading-text hover:text-primary p-1.5 rounded-lg border"
+                            onClick={() => applyTextStyle("bold")}
+                          >
+                            Bold
+                          </button>
+                          <button
+                            type="button"
+                            className="tool-button text-xl heading-text hover:text-primary p-1.5 rounded-lg border"
+                            onClick={() => applyTextStyle("italic")}
+                          >
+                            Italic
+                          </button>
+                          <button
+                            type="button"
+                            className="tool-button text-xl heading-text hover:text-primary p-1.5 rounded-lg border"
+                            onClick={() => applyTextStyle("strike")}
+                          >
+                            Strikethrough
+                          </button>
+                        </div>
+
+                        {/* Feature List */}
+                        {productInfo.productFeatures.map((feature, index) => (
+                          <div
+                            key={index}
+                            className="form-item vertical mb-4 flex items-center gap-2"
+                          >
+                            <input
+                              className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
+                              autoComplete="off"
+                              placeholder="Enter feature"
+                              type="text"
+                              value={feature}
+                              onChange={(e) => handleFeatureChange(e, index)}
+                            />
+                            {/* Delete Feature Button */}
+                            <button
+                              type="button"
+                              className="button bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md"
+                              onClick={() => removeFeature(index)}
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        ))}
+
+                        {/* Add More Feature Button */}
+                        <div className="form-item vertical mt-4">
+                          <button
+                            className="button bg-primary hover:bg-primary-mild text-neutral h-12 rounded-xl px-5 py-2 w-full"
+                            type="button"
+                            onClick={addFeature}
+                          >
+                            + Add Another Feature
+                          </button>
+                        </div>
                       </div>
 
                       {/* Debugging Output */}
@@ -624,75 +716,78 @@ const Create_Product = () => {
                       <h4 className="mb-6">Frequently Asked Questions</h4>
 
                       {/* FAQ List */}
-                      {faq.map((item, index) => (
-                        <div
-                          key={index}
-                          className="mb-4 relative flex items-start gap-4"
-                        >
-                          <div className="w-full">
-                            {/* Question */}
-                            <div className="form-item vertical">
-                              <label className="form-label mb-2">
-                                Question
-                              </label>
-                              <div>
-                                <input
-                                  className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
-                                  autoComplete="off"
-                                  placeholder="Enter your question"
-                                  type="text"
-                                  value={item.question}
-                                  onChange={(e) =>
-                                    handleFaqChange(e, index, "question")
-                                  }
-                                />
-                              </div>
-                            </div>
-
-                            {/* Answer */}
-                            <div className="form-item vertical mt-2">
-                              <label className="form-label mb-2">Answer</label>
-                              <div>
-                                <input
-                                  className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
-                                  autoComplete="off"
-                                  placeholder="Enter the answer"
-                                  type="text"
-                                  value={item.answer}
-                                  onChange={(e) =>
-                                    handleFaqChange(e, index, "answer")
-                                  }
-                                />
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Delete Button */}
-                          <button
-                            className="text-error hover:text-red-600 mt-6"
-                            type="button"
-                            onClick={() => removeFaqField(index)}
+                      {Array.isArray(faq) &&
+                        faq.map((item, index) => (
+                          <div
+                            key={index}
+                            className="mb-4 relative flex items-start gap-4"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className="feather feather-trash-2"
+                            <div className="w-full">
+                              {/* Question */}
+                              <div className="form-item vertical">
+                                <label className="form-label mb-2">
+                                  Question
+                                </label>
+                                <div>
+                                  <input
+                                    className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
+                                    autoComplete="off"
+                                    placeholder="Enter your question"
+                                    type="text"
+                                    value={item.question}
+                                    onChange={(e) =>
+                                      handleFaqChange(e, index, "question")
+                                    }
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Answer */}
+                              <div className="form-item vertical mt-2">
+                                <label className="form-label mb-2">
+                                  Answer
+                                </label>
+                                <div>
+                                  <input
+                                    className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
+                                    autoComplete="off"
+                                    placeholder="Enter the answer"
+                                    type="text"
+                                    value={item.answer}
+                                    onChange={(e) =>
+                                      handleFaqChange(e, index, "answer")
+                                    }
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Delete Button */}
+                            <button
+                              className="text-error hover:text-red-600 mt-6"
+                              type="button"
+                              onClick={() => removeFaqField(index)}
                             >
-                              <polyline points="3 6 5 6 21 6"></polyline>
-                              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
-                              <line x1="10" y1="11" x2="10" y2="17"></line>
-                              <line x1="14" y1="11" x2="14" y2="17"></line>
-                            </svg>
-                          </button>
-                        </div>
-                      ))}
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="feather feather-trash-2"
+                              >
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
 
                       {/* Add More FAQ Button */}
                       <div className="form-item vertical mt-4">

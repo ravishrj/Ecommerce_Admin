@@ -27,7 +27,28 @@ const Edit_Product = () => {
     quantity: "", // Added quantity field
     faq: [{ question: "", answer: "" }], // Added FAQ to the state
     how_product_work: "",
+    productFeatures: [],
   });
+  const handleFeatureChange = (e, index) => {
+    const newFeatures = [...updatedData.productFeatures];
+    newFeatures[index] = e.target.value;
+    setUpdatedData({ ...updatedData, productFeatures: newFeatures });
+  };
+
+  const removeFeature = (index) => {
+    const newFeatures = updatedData.productFeatures.filter(
+      (_, i) => i !== index
+    );
+    setUpdatedData({ ...updatedData, productFeatures: newFeatures });
+  };
+
+  const addFeature = () => {
+    setUpdatedData({
+      ...updatedData,
+      productFeatures: [...updatedData.productFeatures, ""],
+    });
+  };
+
   const handleFaqChange = (e, index, field) => {
     const updatedFaq = [...updatedData.faq]; // Copy the faq array
     updatedFaq[index][field] = e.target.value; // Update the specific field
@@ -125,6 +146,10 @@ const Edit_Product = () => {
             faq: productData?.productData?.faq || [
               { question: "", answer: "" },
             ],
+            how_product_work: productData?.productData?.productInfo
+              ?.how_product_work || [""],
+            productFeatures: productData?.productData?.productInfo
+              ?.productFeatures || [""],
           });
         } else {
           toast.error("Product not found");
@@ -175,6 +200,7 @@ const Edit_Product = () => {
           productDescription: updatedData.productDescription,
           how_product_work: updatedData.how_product_work,
           quantity: updatedData.quantity, // Added quantity field
+          productFeatures: updatedData.productFeatures,
         },
         priceInfo: {
           ...existingProductData.priceInfo,
@@ -347,6 +373,58 @@ const Edit_Product = () => {
                                     name="how_product_work"
                                     onChange={handleChange}
                                   />
+                                </div>
+                              </div>
+                              <div
+                                className="form-item vertical"
+                                bis_skin_checked={1}
+                              >
+                                <label className="form-label mb-2">
+                                  Product Features
+                                </label>
+
+                                {/* Feature List */}
+                                {updatedData.productFeatures.map(
+                                  (feature, index) => (
+                                    <div
+                                      key={index}
+                                      className="form-item vertical mb-4 flex items-center gap-2"
+                                      bis_skin_checked={1}
+                                    >
+                                      <input
+                                        className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
+                                        autoComplete="off"
+                                        placeholder="Enter feature"
+                                        type="text"
+                                        value={feature}
+                                        onChange={(e) =>
+                                          handleFeatureChange(e, index)
+                                        }
+                                      />
+                                      {/* Delete Feature Button */}
+                                      <button
+                                        type="button"
+                                        className="button bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md"
+                                        onClick={() => removeFeature(index)}
+                                      >
+                                        🗑️
+                                      </button>
+                                    </div>
+                                  )
+                                )}
+
+                                {/* Add More Feature Button */}
+                                <div
+                                  className="form-item vertical mt-4"
+                                  bis_skin_checked={1}
+                                >
+                                  <button
+                                    className="button bg-primary hover:bg-primary-mild text-neutral h-12 rounded-xl px-5 py-2 w-full"
+                                    type="button"
+                                    onClick={addFeature}
+                                  >
+                                    + Add Another Feature
+                                  </button>
                                 </div>
                               </div>
                             </div>
