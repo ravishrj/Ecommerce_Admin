@@ -31,6 +31,19 @@ const Create_Product = () => {
   const [faq, setFaq] = useState([
     { question: "", answer: "" }, // Initial empty entry
   ]);
+  const [otherDetails, setOtherDetails] = useState({
+    compatibility: "",
+    free_trial: "",
+    subscription_model: "",
+  });
+
+  const handleOtherDetailsChange = (e) => {
+    const { name, value } = e.target;
+    setOtherDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
 
   const handleFaqChange = (e, index, field) => {
     const updatedFaqs = [...faq];
@@ -56,6 +69,7 @@ const Create_Product = () => {
       priceInfo, // Contains Price, costPrice, discount_Price, tax_Rate
       attribute,
       faq,
+      otherDetails,
     };
 
     // Add the new product data to the createProductInfo array
@@ -104,6 +118,11 @@ const Create_Product = () => {
       Brands: "",
     });
     setFaq([{ question: "", answer: "" }]);
+    setOtherDetails({
+      compatibility: "",
+      free_trial: "",
+      subscription_model: "",
+    });
   };
 
   const handleFeatureChange = (e, index) => {
@@ -707,6 +726,57 @@ const Create_Product = () => {
                       </div>
                     </div>
                   </div>
+
+                  <div className="card card-border" role="presentation">
+                    <div className="card-body">
+                      <h4 className="mb-6">Other Details</h4>
+
+                      {/* Compatibility */}
+                      <div className="form-item vertical mb-4">
+                        <label className="form-label mb-2">Compatibility</label>
+                        <input
+                          className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
+                          autoComplete="off"
+                          placeholder="Enter compatibility"
+                          type="text"
+                          name="compatibility"
+                          value={otherDetails.compatibility}
+                          onChange={handleOtherDetailsChange}
+                        />
+                      </div>
+
+                      {/* Free Trial */}
+                      <div className="form-item vertical mb-4">
+                        <label className="form-label mb-2">Free Trial</label>
+                        <input
+                          className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
+                          autoComplete="off"
+                          placeholder="Enter free trial details"
+                          type="text"
+                          name="free_trial"
+                          value={otherDetails.free_trial}
+                          onChange={handleOtherDetailsChange}
+                        />
+                      </div>
+
+                      {/* Subscription Model */}
+                      <div className="form-item vertical mb-4">
+                        <label className="form-label mb-2">
+                          Subscription Model
+                        </label>
+                        <input
+                          className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
+                          autoComplete="off"
+                          placeholder="Enter subscription model"
+                          type="text"
+                          name="subscription_model"
+                          value={otherDetails.subscription_model}
+                          onChange={handleOtherDetailsChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   <div
                     className="card card-border"
                     role="presentation"

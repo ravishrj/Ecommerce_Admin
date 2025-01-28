@@ -6,6 +6,7 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
   const [productToggle, setProductToggle] = useState(false);
   const [adminToggle, setAdminToggle] = useState(false);
   const [scriptToggle, setScriptToggle] = useState(false);
+  const [FAQ, setFAQ] = useState(false);
   return (
     <div
       className={
@@ -1596,6 +1597,9 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                 <div
                                   className="menu-collapse-item"
                                   role="presentation"
+                                  onClick={() => {
+                                    setFAQ((prev) => !prev);
+                                  }}
                                   bis_skin_checked={1}
                                 >
                                   <span className="flex items-center gap-2">
@@ -1616,11 +1620,15 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z" />
                                       </svg>
                                     </span>
-                                    <span>Help Center</span>
+                                    <span>FAQ</span>
                                   </span>
                                   <span
                                     className="text-lg mt-1"
-                                    style={{ transform: "rotate(0deg)" }}
+                                    style={{
+                                      transform: FAQ
+                                        ? "rotate(-180deg)"
+                                        : "rotate(0deg)",
+                                    }}
                                   >
                                     <svg
                                       stroke="currentColor"
@@ -1640,8 +1648,8 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                 <ul
                                   className=""
                                   style={{
-                                    opacity: 0,
-                                    height: 0,
+                                    opacity: FAQ ? 1 : 0,
+                                    height: FAQ ? "auto" : 0,
                                     overflow: "hidden",
                                   }}
                                 >
@@ -1664,13 +1672,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
-                                      href="/concepts/help-center/support-hub"
+                                      href="/concepts/FAQ/create-faq"
                                       target=""
                                     >
-                                      <span>Support Hub</span>
-                                    </a>
+                                      <span>Create-Faq</span>
+                                    </Link>
                                   </div>
                                   <div
                                     className="menu-item menu-item-hoverable items-center gap-2"
@@ -1691,67 +1699,13 @@ const Sidebar = ({ navbarToggle, setNavbarToggle, isMobile }) => {
                                         <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
                                       </svg>
                                     </div>
-                                    <a
+                                    <Link
                                       className="flex items-center gap-2 h-full w-full"
-                                      href="/concepts/help-center/article/pWBKE_0UiQ"
+                                      href="/concepts/FAQ/faq-list"
                                       target=""
                                     >
-                                      <span>Article</span>
-                                    </a>
-                                  </div>
-                                  <div
-                                    className="menu-item menu-item-hoverable items-center gap-2"
-                                    bis_skin_checked={1}
-                                    style={{ height: 48 }}
-                                  >
-                                    <div bis_skin_checked={1}>
-                                      <svg
-                                        stroke="currentColor"
-                                        fill="currentColor"
-                                        strokeWidth={0}
-                                        viewBox="0 0 256 256"
-                                        className="text-3xl w-[24px] opacity-25"
-                                        height="1em"
-                                        width="1em"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
-                                      </svg>
-                                    </div>
-                                    <a
-                                      className="flex items-center gap-2 h-full w-full"
-                                      href="/concepts/help-center/edit-article/pWBKE_0UiQ"
-                                      target=""
-                                    >
-                                      <span>Edit Article</span>
-                                    </a>
-                                  </div>
-                                  <div
-                                    className="menu-item menu-item-hoverable items-center gap-2"
-                                    bis_skin_checked={1}
-                                    style={{ height: 48 }}
-                                  >
-                                    <div bis_skin_checked={1}>
-                                      <svg
-                                        stroke="currentColor"
-                                        fill="currentColor"
-                                        strokeWidth={0}
-                                        viewBox="0 0 256 256"
-                                        className="text-3xl w-[24px] opacity-25"
-                                        height="1em"
-                                        width="1em"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z" />
-                                      </svg>
-                                    </div>
-                                    <a
-                                      className="flex items-center gap-2 h-full w-full"
-                                      href="/concepts/help-center/manage-article"
-                                      target=""
-                                    >
-                                      <span>Manage Article</span>
-                                    </a>
+                                      <span>Faq-List</span>
+                                    </Link>
                                   </div>
                                 </ul>
                               </div>

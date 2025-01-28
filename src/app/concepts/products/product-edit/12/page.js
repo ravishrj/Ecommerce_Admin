@@ -28,7 +28,18 @@ const Edit_Product = () => {
     faq: [{ question: "", answer: "" }], // Added FAQ to the state
     how_product_work: "",
     productFeatures: [],
+    compatibility: "",
+    free_trial: "",
+    subscription_model: "",
   });
+
+  const handleOtherDetailsChange = (e, field) => {
+    setUpdatedData((prev) => ({
+      ...prev,
+      [field]: e.target.value || "", // Default to empty string
+    }));
+  };
+
   const handleFeatureChange = (e, index) => {
     const newFeatures = [...updatedData.productFeatures];
     newFeatures[index] = e.target.value;
@@ -142,7 +153,7 @@ const Edit_Product = () => {
             Tags: productData.productData?.attribute?.Tags || [],
             Brands: productData.productData?.attribute?.Brands || "",
             productImages: productData.productData?.productImages || [],
-            quantity: productData.productData?.stockInfo?.quantity || "", // Added quantity field
+            quantity: productData.productData?.productInfo?.quantity || "", // Added quantity field
             faq: productData?.productData?.faq || [
               { question: "", answer: "" },
             ],
@@ -150,6 +161,11 @@ const Edit_Product = () => {
               ?.how_product_work || [""],
             productFeatures: productData?.productData?.productInfo
               ?.productFeatures || [""],
+            compatibility:
+              productData.productData?.otherDetails?.compatibility || "",
+            free_trial: productData.productData?.otherDetails?.free_trial || "",
+            subscription_model:
+              productData.productData?.otherDetails?.subscription_model || "",
           });
         } else {
           toast.error("Product not found");
@@ -222,6 +238,13 @@ const Edit_Product = () => {
         faq: updatedData.faq?.length
           ? updatedData.faq
           : existingProductData.faq || [],
+
+        otherDetails: {
+          ...existingProductData.otherDetails,
+          compatibility: updatedData.compatibility,
+          free_trial: updatedData.free_trial,
+          subscription_model: updatedData.subscription_model,
+        },
       };
 
       // Update the document in Firestore
@@ -730,6 +753,66 @@ const Edit_Product = () => {
                               </div>
                             </div>
                           </div>
+                          <div className="card card-border" role="presentation">
+                            <div className="card-body">
+                              <h4 className="mb-6">Other Details</h4>
+
+                              {/* Compatibility */}
+                              <div className="form-item vertical">
+                                <label className="form-label mb-2">
+                                  Compatibility
+                                </label>
+                                <input
+                                  className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
+                                  autoComplete="off"
+                                  placeholder="Enter compatibility details"
+                                  type="text"
+                                  value={updatedData?.compatibility || ""}
+                                  onChange={(e) =>
+                                    handleOtherDetailsChange(e, "compatibility")
+                                  }
+                                />
+                              </div>
+
+                              {/* Free Trial */}
+                              <div className="form-item vertical mt-4">
+                                <label className="form-label mb-2">
+                                  Free Trial
+                                </label>
+                                <input
+                                  className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
+                                  autoComplete="off"
+                                  placeholder="Enter free trial duration"
+                                  type="text"
+                                  value={updatedData?.free_trial || ""}
+                                  onChange={(e) =>
+                                    handleOtherDetailsChange(e, "free_trial")
+                                  }
+                                />
+                              </div>
+
+                              {/* Subscription Model */}
+                              <div className="form-item vertical mt-4">
+                                <label className="form-label mb-2">
+                                  Subscription Model
+                                </label>
+                                <input
+                                  className="input input-md h-12 focus:ring-primary focus-within:ring-primary focus-within:border-primary focus:border-primary w-full"
+                                  autoComplete="off"
+                                  placeholder="Enter subscription model"
+                                  type="text"
+                                  value={updatedData?.subscription_model || ""}
+                                  onChange={(e) =>
+                                    handleOtherDetailsChange(
+                                      e,
+                                      "subscription_model"
+                                    )
+                                  }
+                                />
+                              </div>
+                            </div>
+                          </div>
+
                           <div
                             className="card card-border"
                             role="presentation"
